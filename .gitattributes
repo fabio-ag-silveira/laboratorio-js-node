@@ -1,0 +1,4 @@
+# Normaliza as quebras de linha: LF dentro do repositório, seja qual for o
+# sistema de quem clonar. Sem isto, o Windows grava CRLF e qualquer diff feito
+# em outra máquina aparece como "o arquivo inteiro mudou".
+* text=auto eol=lf

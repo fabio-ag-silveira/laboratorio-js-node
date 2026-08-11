@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Laboratório JS + Node</title>
+    <link rel="stylesheet" href="/estilo.css" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>"
+    />
+  </head>
+  <body>
+    <header class="topo">
+      <button class="menu-botao" id="menu-botao" aria-label="Abrir menu">☰</button>
+
+      <a class="marca" href="#/licao/orientacao/mapa">
+        <span class="marca-icone">⚡</span>
+        <span class="marca-texto">Laboratório <b>JS + Node</b></span>
+      </a>
+
+      <nav class="abas" id="abas">
+        <a href="#/licao/orientacao/mapa" data-aba="licao">Trilha</a>
+        <a href="#/playground" data-aba="playground">Playground</a>
+        <a href="#/explorador" data-aba="explorador">Explorador de API</a>
+        <a href="#/colinha" data-aba="colinha">Colinha</a>
+      </nav>
+
+      <button class="tema-botao" id="tema-botao" aria-label="Alternar tema">◐</button>
+    </header>
+
+    <div class="corpo">
+      <aside class="lateral" id="lateral">
+        <div class="progresso-caixa">
+          <svg class="anel" viewBox="0 0 44 44" aria-hidden="true">
+            <circle class="anel-fundo" cx="22" cy="22" r="19" />
+            <circle class="anel-frente" id="anel-frente" cx="22" cy="22" r="19" />
+          </svg>
+          <div class="progresso-texto">
+            <strong id="progresso-pct">0%</strong>
+            <span id="progresso-detalhe">0 de 0 lições</span>
+          </div>
+        </div>
+
+        <nav class="indice" id="indice"></nav>
+
+        <button class="limpar-progresso" id="limpar-progresso">zerar progresso</button>
+      </aside>
+
+      <main class="principal" id="principal"></main>
+    </div>
+
+    <div class="fundo-escuro" id="fundo-escuro"></div>
+
+    <script type="module" src="/js/app.js"></script>
+  </body>
+</html>

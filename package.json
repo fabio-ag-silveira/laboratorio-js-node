@@ -1,0 +1,15 @@
+{
+  "name": "laboratorio-js",
+  "version": "1.0.0",
+  "description": "Laboratório interativo para aprender JavaScript, Node.js e APIs — feito para quem vem do Python",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "node servidor/index.js",
+    "dev": "node --watch servidor/index.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
