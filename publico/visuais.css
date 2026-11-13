@@ -243,3 +243,88 @@ canvas.mira {
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
+
+/* ---------- ciclo de vida (cv/ciclo) ---------------------------------- */
+
+.ciclo-trilho {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.ciclo-etapa {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  min-width: 86px;
+  padding: 9px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--borda-forte);
+  background: var(--fundo);
+  color: var(--texto-2);
+  font-family: inherit;
+  font-size: 12.5px;
+  cursor: pointer;
+}
+.ciclo-etapa:hover {
+  border-color: var(--destaque);
+  color: var(--texto);
+}
+.ciclo-etapa.ativo {
+  border-color: var(--destaque);
+  background: var(--destaque-suave);
+  color: var(--destaque);
+  font-weight: 600;
+}
+.ciclo-icone {
+  font-size: 20px;
+  line-height: 1.2;
+}
+.ciclo-seta {
+  color: var(--texto-3);
+}
+.ciclo-volta {
+  flex-basis: 100%;
+  margin-top: 6px;
+  font-size: 12.5px;
+  color: var(--texto-3);
+}
+.ciclo-detalhe {
+  padding: 14px 16px;
+  border-top: 1px solid var(--borda);
+}
+.ciclo-detalhe h4 {
+  margin: 0 0 10px;
+  font-size: 15px;
+}
+.ciclo-linhas > div {
+  display: flex;
+  gap: 12px;
+  padding: 5px 0;
+  font-size: 13.5px;
+  color: var(--texto-2);
+  line-height: 1.5;
+}
+.ciclo-linhas span {
+  flex: 0 0 88px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--texto-3);
+  padding-top: 2px;
+}
+.ciclo-erro {
+  color: var(--texto) !important;
+}
+.ciclo-erro span {
+  color: var(--vermelho) !important;
+}
+.ciclo-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin-top: 10px;
+  font-size: 13px;
+}
