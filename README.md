@@ -21,7 +21,7 @@ nada para instalar. Outra porta, se precisar: `PORTA=5000 npm start`.
 | Trilha | Estado | Executa em |
 |---|---|---|
 | JavaScript e Node | pronta (24 lições) | navegador e Node |
-| Visão Computacional | parte clássica pronta (9 lições); deep learning em construção | navegador (canvas) e Python (OpenCV, PyTorch) |
+| Visão Computacional | 26 lições: clássico, deep learning, detecção, avaliação e laboratório de treino; parte avançada em construção | navegador (canvas) e Python (OpenCV, PyTorch, Ultralytics) |
 | React | em construção | prévia ao vivo |
 | React Native | em construção | prévia em moldura de celular |
 | PostgreSQL | em construção | Postgres embutido |
@@ -64,7 +64,7 @@ npm test            # API, formato de todas as lições e soluções dos exercí
 npm run verificar   # executa todos os blocos de código de todas as trilhas
 ```
 
-`npm run verificar -- visao` restringe a uma trilha.
+`npm run verificar -- visao` restringe a uma trilha. Blocos demorados, como o treino de um detector, só entram com `--lentos`.
 
 ## Estrutura
 

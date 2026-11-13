@@ -119,7 +119,9 @@ function descobrirDotnet() {
 
 // ---- API pública ----------------------------------------------------------
 
-const TEMPO_MAXIMO_S = 300;
+// Teto do tempo que um bloco pode pedir. Quinze minutos cobrem o treino de um
+// detector pequeno na lição de laboratório; nada além disso deve rodar aqui.
+const TEMPO_MAXIMO_S = 900;
 
 export const LINGUAGENS = ['node', 'python', 'csharp'];
 

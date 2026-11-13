@@ -9,6 +9,10 @@
 import { modulo as partida } from './00-partida.js';
 import { modulo as imagem } from './01-imagem.js';
 import { modulo as classico } from './02-classico.js';
+import { modulo as aprendizado } from './03-aprendizado.js';
+import { modulo as deteccao } from './04-deteccao.js';
+import { modulo as avaliacao } from './05-avaliacao.js';
+import { modulo as laboratorio } from './06-laboratorio.js';
 
 export const trilha = {
   id: 'visao',
@@ -18,5 +22,5 @@ export const trilha = {
   icone: '👁️',
   cor: '#5ec9a7',
   ponte: 'reforço e aprofundamento',
-  modulos: [partida, imagem, classico],
+  modulos: [partida, imagem, classico, aprendizado, deteccao, avaliacao, laboratorio],
 };

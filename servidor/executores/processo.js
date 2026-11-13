@@ -136,7 +136,14 @@ async function separarPartes(saida, pasta) {
   };
 
   for (const linha of saida.split('\n')) {
-    const limpa = linha.replace(/\r$/, '');
+    // Barras de progresso reescrevem a própria linha com \r (retorno de carro)
+    // e códigos ANSI de cor. Um terminal mostraria só o último estado da linha;
+    // fazemos o mesmo, senão um download vira dezenas de linhas de lixo.
+    const limpa = linha
+      .replace(/\r$/, '')
+      .split('\r')
+      .pop()
+      .replace(/\u001b\[[0-9;?]*[A-Za-z]/g, '');
     if (!limpa.startsWith(MARCADOR)) {
       // `limpa` e não `linha`: no Windows o processo escreve CRLF, e o \r
       // sobrando vira um caractere invisível no fim de cada linha da tela.

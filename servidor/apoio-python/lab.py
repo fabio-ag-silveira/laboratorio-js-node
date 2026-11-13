@@ -394,3 +394,175 @@ def amostra(nome: str = "armadilha", semente: int = 0, **opcoes) -> np.ndarray:
         return img
 
     raise ValueError(f"amostra desconhecida: {nome}. Use 'armadilha', 'armadilha-densa', 'formas' ou 'xadrez'.")
+
+
+# --------------------------------------------------------------------------
+#  Apoio para as lições de detecção e avaliação
+# --------------------------------------------------------------------------
+
+def iou(a, b) -> float:
+    """IoU de duas caixas {x, y, w, h} (canto superior esquerdo, em pixels)."""
+    ix = max(0.0, min(a["x"] + a["w"], b["x"] + b["w"]) - max(a["x"], b["x"]))
+    iy = max(0.0, min(a["y"] + a["h"], b["y"] + b["h"]) - max(a["y"], b["y"]))
+    inter = ix * iy
+    uniao = a["w"] * a["h"] + b["w"] * b["h"] - inter
+    return inter / uniao if uniao > 0 else 0.0
+
+
+# Duas "versões" do mesmo detector simulado. A v2 confunde menos sujeira com
+# inseto e duplica menos caixas; o recall é parecido.
+PERFIS = {
+    "v1": dict(p_detectar=0.90, perda_pequeno=0.22, tremor=0.04, tremor_px=1.3, p_falso_detrito=0.60,
+               conf_falso=(0.30, 0.85), fundo=5, p_duplicata=0.12, p_troca=0.06),
+    "v2": dict(p_detectar=0.90, perda_pequeno=0.20, tremor=0.03, tremor_px=1.0, p_falso_detrito=0.20,
+               conf_falso=(0.15, 0.55), fundo=2, p_duplicata=0.04, p_troca=0.04),
+}
+
+
+def detector_simulado(gabarito, detritos, versao: str = "v1", semente: int = 0,
+                      largura: int = 960, altura: int = 720):
+    """
+    Um detector de mentira com os defeitos de um de verdade.
+
+    Perde objetos pequenos, erra um pouco a posição, confunde sujeira com
+    inseto, às vezes marca o mesmo objeto duas vezes e troca classes parecidas.
+    Devolve uma lista de {classe, conf, x, y, w, h, origem}. O campo `origem`
+    ("objeto", "duplicata", "detrito", "fundo") diz que erro foi plantado: num
+    detector real você não tem isso, e é o que a análise de erro tenta inferir.
+    """
+    p = PERFIS[versao] if isinstance(versao, str) else versao
+    rng = np.random.default_rng(semente * 7919 + 13)
+    classes = ["mariposa", "cigarrinha", "mosca"]
+    saida = []
+
+    def tremer(c, relativo, pixels):
+        # O erro de posição tem uma parte proporcional ao tamanho da caixa e uma
+        # parte FIXA em pixels. É a parte fixa que castiga objeto pequeno.
+        return dict(
+            x=c["x"] + rng.normal(0, relativo * c["w"] + pixels),
+            y=c["y"] + rng.normal(0, relativo * c["h"] + pixels),
+            w=max(3.0, c["w"] * (1 + rng.normal(0, relativo)) + rng.normal(0, pixels)),
+            h=max(3.0, c["h"] * (1 + rng.normal(0, relativo)) + rng.normal(0, pixels)),
+        )
+
+    for g in gabarito:
+        lado = math.sqrt(g["w"] * g["h"])
+        pequeno = max(0.0, 1 - lado / 14)   # abaixo de ~14 px fica mais difícil
+        if rng.random() > p["p_detectar"] - p["perda_pequeno"] * pequeno:
+            continue
+        conf = float(np.clip(0.9 - 0.35 * pequeno + rng.normal(0, 0.09), 0.05, 0.99))
+        classe = g["classe"]
+        if rng.random() < p["p_troca"]:
+            classe = classes[(classes.index(classe) + 1 + int(rng.integers(0, 2))) % 3]
+        saida.append(dict(classe=classe, conf=conf, origem="objeto", **tremer(g, p["tremor"], p["tremor_px"])))
+        if rng.random() < p["p_duplicata"]:
+            saida.append(dict(classe=g["classe"], conf=conf * float(rng.uniform(0.45, 0.8)),
+                              origem="duplicata", **tremer(g, p["tremor"] * 2, p["tremor_px"] * 1.5)))
+
+    for d in detritos or []:
+        if rng.random() > p["p_falso_detrito"]:
+            continue
+        saida.append(dict(classe="mosca" if rng.random() < 0.6 else "cigarrinha",
+                          conf=float(rng.uniform(*p["conf_falso"])), origem="detrito", **tremer(d, 0.05, 0.8)))
+
+    for _ in range(p["fundo"]):
+        lado = float(rng.uniform(7, 20))
+        saida.append(dict(classe=classes[int(rng.integers(0, 3))], conf=float(rng.uniform(0.05, 0.3)),
+                          x=float(rng.uniform(0, largura - lado)), y=float(rng.uniform(0, altura - lado)),
+                          w=lado, h=lado * float(rng.uniform(0.7, 1.3)), origem="fundo"))
+    return saida
+
+
+def casar(deteccoes, gabarito, iou_min: float = 0.5, conf_min: float = 0.0, por_classe: bool = True):
+    """
+    Casa detecções com o gabarito, como os avaliadores COCO/VOC.
+
+    Percorre as detecções da mais confiante para a menos; cada uma fica com o
+    objeto ainda livre de maior IoU, se passar de iou_min. Devolve um dicionário
+    com tp (lista de (i_det, i_gab, iou)), fp (índices de detecção) e fn
+    (índices do gabarito).
+    """
+    ordem = sorted((i for i, d in enumerate(deteccoes) if d["conf"] >= conf_min),
+                   key=lambda i: -deteccoes[i]["conf"])
+    usado = [False] * len(gabarito)
+    tp, fp = [], []
+    for i in ordem:
+        d = deteccoes[i]
+        melhor, melhor_iou = -1, iou_min
+        for k, g in enumerate(gabarito):
+            if usado[k] or (por_classe and g["classe"] != d["classe"]):
+                continue
+            v = iou(d, g)
+            if v >= melhor_iou:
+                melhor, melhor_iou = k, v
+        if melhor >= 0:
+            usado[melhor] = True
+            tp.append((i, melhor, melhor_iou))
+        else:
+            fp.append(i)
+    fn = [k for k, u in enumerate(usado) if not u]
+    return dict(tp=tp, fp=fp, fn=fn)
+
+
+def conjunto(n: int = 30, versao: str = "v1", semente: int = 0, com_imagem: bool = False,
+             semente_detector: int = 0, **opcoes):
+    """
+    Um conjunto de avaliação: n armadilhas com gabarito e as detecções do
+    detector simulado. Cada item é {gabarito, detritos, deteccoes[, imagem]}.
+
+    A mesma `semente` gera as MESMAS armadilhas para qualquer versão, que é o
+    que permite comparar dois modelos no mesmo conjunto de teste.
+    `semente_detector` muda só o sorteio dos erros do detector: dois modelos
+    de verdade não erram nos mesmos lugares, então ao comparar versões use um
+    valor diferente para cada uma.
+    """
+    itens = []
+    for i in range(n):
+        s = semente * 1000 + i
+        img, gabarito, detritos = amostra_com_gabarito("armadilha", semente=s, **opcoes)
+        item = dict(gabarito=gabarito, detritos=detritos,
+                    deteccoes=detector_simulado(gabarito, detritos, versao, semente=s + 100003 * semente_detector,
+                                                largura=img.shape[1], altura=img.shape[0]))
+        if com_imagem:
+            item["imagem"] = img
+        itens.append(item)
+    return itens
+
+
+def recortes(n_armadilhas: int = 40, tamanho: int = 32, semente: int = 0, brilho: float = 1.0):
+    """
+    Recortes quadrados para treinar um classificador pequeno.
+
+    Devolve (X, y): X é uint8 no formato (N, tamanho, tamanho, 3), em BGR, e
+    y vale 0 para fundo, 1 para inseto e 2 para detrito. `brilho` multiplica a
+    imagem antes do recorte, para simular outra condição de iluminação.
+    """
+    rng = np.random.default_rng(semente + 12345)
+    X, y = [], []
+
+    def recortar(img, cx, cy, lado):
+        meio = int(max(lado, 12) * 0.75)
+        x0, y0 = int(cx) - meio, int(cy) - meio
+        pedaco = img[max(0, y0): y0 + 2 * meio, max(0, x0): x0 + 2 * meio]
+        if pedaco.shape[0] < 8 or pedaco.shape[1] < 8:
+            return None
+        return cv2.resize(pedaco, (tamanho, tamanho), interpolation=cv2.INTER_AREA)
+
+    for i in range(n_armadilhas):
+        img, gabarito, detritos = amostra_com_gabarito("armadilha", semente=semente * 1000 + i,
+                                                       insetos=30, detritos=30, aglomerado=0.0)
+        if brilho != 1.0:
+            img = np.clip(img.astype(np.float32) * brilho, 0, 255).astype(np.uint8)
+        for caixas, rotulo in ((gabarito, 1), (detritos, 2)):
+            for c in caixas:
+                r = recortar(img, c["x"] + c["w"] / 2, c["y"] + c["h"] / 2, max(c["w"], c["h"]))
+                if r is not None:
+                    X.append(r)
+                    y.append(rotulo)
+        for _ in range(30):  # fundo: pontos sorteados (alguns pegam inseto de raspão, como em dado real)
+            r = recortar(img, rng.uniform(30, img.shape[1] - 30), rng.uniform(30, img.shape[0] - 30),
+                         rng.uniform(12, 40))
+            if r is not None:
+                X.append(r)
+                y.append(0)
+    return np.stack(X), np.array(y, dtype=np.int64)

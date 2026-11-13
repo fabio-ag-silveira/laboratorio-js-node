@@ -4,6 +4,7 @@
  *     npm run verificar                  tudo
  *     npm run verificar -- visao         só uma trilha
  *     npm run verificar -- visao/metricas  só lições cujo endereço contém o texto
+ *     npm run verificar -- visao --lentos  inclui os blocos demorados (treino de modelo)
  *
  * Lição com exemplo quebrado ensina errado, então isto roda antes de todo
  * commit. Cada bloco pode declarar:
@@ -11,6 +12,7 @@
  *     esperaFalha: true        o bloco DEVE terminar com erro (é a lição)
  *     requer: ['express']      só roda se o pacote npm estiver instalado
  *     requerPython: ['torch']  só roda se o módulo Python existir
+ *     lento: true              leva minutos (treino); só roda com --lentos
  *
  * Os blocos de navegador rodam aqui no Node, com um `fetch` que entende URL
  * relativa apontando para um servidor do laboratório subido numa porta livre.
@@ -21,7 +23,9 @@ import { carregarTrilhas } from '../conteudo/index.js';
 import { criarServidor } from '../servidor/app.js';
 import { executar, ambiente } from '../servidor/executores/index.js';
 
-const filtro = process.argv[2] ?? '';
+const argumentos = process.argv.slice(2);
+const incluirLentos = argumentos.includes('--lentos');
+const filtro = argumentos.find((a) => !a.startsWith('--')) ?? '';
 const exigir = createRequire(import.meta.url);
 
 // Diferença real entre os ambientes: promise rejeitada sem `catch` só gera um
@@ -87,8 +91,13 @@ for (const { onde, bloco } of blocos) {
   const semLinguagem =
     (bloco.rodar === 'python' && !amb.python.ok) || (bloco.rodar === 'csharp' && !amb.dotnet.ok);
 
-  if (faltaNpm.length || faltaPy.length || semLinguagem) {
-    const motivo = semLinguagem ? `${bloco.rodar} não instalado` : `falta ${[...faltaNpm, ...faltaPy].join(', ')}`;
+  const lento = bloco.lento && !incluirLentos;
+  if (faltaNpm.length || faltaPy.length || semLinguagem || lento) {
+    const motivo = lento
+      ? 'lento: use --lentos'
+      : semLinguagem
+        ? `${bloco.rodar} não instalado`
+        : `falta ${[...faltaNpm, ...faltaPy].join(', ')}`;
     console.log(`pulado  [${bloco.rodar}] ${nome}  (${motivo})`);
     placar.pulado++;
     continue;
