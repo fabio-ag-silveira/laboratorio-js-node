@@ -1,23 +1,22 @@
 /**
- * Trilha "Visão Computacional" — ainda em construção.
+ * Trilha "Visão Computacional" — do pixel ao estado da arte.
  *
- * Enquanto `modulos` estiver vazio, a trilha aparece na página inicial como
- * "em construção", mostrando o que está previsto.
+ * Cada lição combina três coisas: um componente interativo no navegador
+ * (canvas puro), blocos de Python que rodam na sua máquina (OpenCV e PyTorch)
+ * e perguntas de fixação que alimentam a página de revisão.
  */
 
+import { modulo as partida } from './00-partida.js';
+import { modulo as imagem } from './01-imagem.js';
+import { modulo as classico } from './02-classico.js';
+
 export const trilha = {
-  id: "visao",
+  id: 'visao',
   ordem: 10,
-  titulo: "Visão Computacional",
-  subtitulo: "Do pixel ao estado da arte: clássico, deep learning, detecção, avaliação e produção",
-  icone: "👁️",
-  cor: "#5ec9a7",
-  ponte: "reforço e aprofundamento",
-  previsto: [
-    "Imagem como dado e processamento clássico",
-    "Deep learning, detecção e métricas",
-    "Objetos pequenos, dados e modelos de fundação",
-    "Produção e estado da arte de 2026"
-  ],
-  modulos: []
+  titulo: 'Visão Computacional',
+  subtitulo: 'Do pixel ao estado da arte: clássico, deep learning, detecção, avaliação e produção',
+  icone: '👁️',
+  cor: '#5ec9a7',
+  ponte: 'reforço e aprofundamento',
+  modulos: [partida, imagem, classico],
 };
