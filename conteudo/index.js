@@ -1,19 +1,67 @@
 /**
- * Junta todos os módulos numa única trilha.
+ * Catálogo de trilhas.
  *
- * Repare no padrão: cada arquivo exporta `modulo` (exportação nomeada), e aqui
- * renomeamos na importação com `as`. É o equivalente do
- * `from m0 import modulo as orientacao` do Python.
+ * Cada subpasta de `conteudo/` que tiver um `index.js` exportando `trilha` vira
+ * uma trilha do laboratório. A descoberta é automática de propósito: assim as
+ * trilhas não disputam um arquivo central de registro, e dá para escrever duas
+ * ao mesmo tempo sem conflito.
+ *
+ * `import()` com caminho calculado é o `importlib.import_module()` do Python.
  */
 
-import { modulo as orientacao } from './00-orientacao.js';
-import { modulo as javascript } from './01-javascript.js';
-import { modulo as async } from './02-async.js';
-import { modulo as node } from './03-node.js';
-import { modulo as apis } from './04-apis.js';
-import { modulo as projeto } from './05-projeto.js';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
-export const trilha = [orientacao, javascript, async, node, apis, projeto];
+const PASTA = path.dirname(fileURLToPath(import.meta.url));
 
-/** Total de lições — usado na barra de progresso da interface. */
-export const totalLicoes = trilha.reduce((n, m) => n + m.licoes.length, 0);
+let cache = null;
+
+/** Carrega todas as trilhas, na ordem do campo `ordem`. */
+export async function carregarTrilhas() {
+  if (cache) return cache;
+
+  const entradas = await fs.readdir(PASTA, { withFileTypes: true });
+  const trilhas = [];
+
+  for (const entrada of entradas) {
+    if (!entrada.isDirectory()) continue;
+    const arquivo = path.join(PASTA, entrada.name, 'index.js');
+    try {
+      await fs.access(arquivo);
+    } catch {
+      continue; // pasta sem index.js não é trilha
+    }
+    // No Windows, import() de caminho absoluto exige URL file://
+    const modulo = await import(pathToFileURL(arquivo).href);
+    if (modulo.trilha) trilhas.push(modulo.trilha);
+  }
+
+  trilhas.sort((a, b) => (a.ordem ?? 99) - (b.ordem ?? 99));
+  cache = trilhas;
+  return trilhas;
+}
+
+/**
+ * Versão enxuta para a página inicial e o menu: só títulos, sem os blocos.
+ * O conteúdo completo de uma trilha só viaja quando ela é aberta.
+ */
+export function resumir(trilha) {
+  return {
+    id: trilha.id,
+    ordem: trilha.ordem,
+    titulo: trilha.titulo,
+    subtitulo: trilha.subtitulo,
+    icone: trilha.icone,
+    cor: trilha.cor,
+    ponte: trilha.ponte,
+    estado: trilha.estado ?? (trilha.modulos.length ? 'pronta' : 'em-breve'),
+    previsto: trilha.previsto ?? [],
+    modulos: trilha.modulos.map((m) => ({
+      id: m.id,
+      titulo: m.titulo,
+      cor: m.cor,
+      licoes: m.licoes.map((l) => ({ id: l.id, titulo: l.titulo, minutos: l.minutos })),
+    })),
+  };
+}

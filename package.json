@@ -1,13 +1,14 @@
 {
-  "name": "laboratorio-js",
-  "version": "1.0.0",
-  "description": "Laboratório interativo para aprender JavaScript, Node.js e APIs — feito para quem vem do Python",
+  "name": "laboratorio-dev",
+  "version": "2.0.0",
+  "description": "Laboratório interativo de estudo: JavaScript, Node, visão computacional, React, C#, PostgreSQL e Azure — todo código da tela executa de verdade",
   "type": "module",
   "private": true,
   "scripts": {
     "start": "node servidor/index.js",
     "dev": "node --watch servidor/index.js",
-    "test": "node --test"
+    "test": "node --test",
+    "verificar": "node ferramentas/rodar-blocos.mjs"
   },
   "engines": {
     "node": ">=20"

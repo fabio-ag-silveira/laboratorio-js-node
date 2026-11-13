@@ -13,56 +13,7 @@
 
 import { criarEditor } from './editor.js';
 import { renderizarMarkdown } from './markdown.js';
-import { formatar } from './execucao.js';
-
-/** Comparação profunda, para arrays e objetos. */
-function iguaisProfundo(a, b) {
-  if (Object.is(a, b)) return true;
-  if (typeof a !== 'object' || typeof b !== 'object' || a === null || b === null) return false;
-  if (Array.isArray(a) !== Array.isArray(b)) return false;
-
-  const ca = Object.keys(a);
-  const cb = Object.keys(b);
-  if (ca.length !== cb.length) return false;
-  return ca.every((k) => Object.hasOwn(b, k) && iguaisProfundo(a[k], b[k]));
-}
-
-/** As asserções disponíveis dentro dos testes. */
-function esperar(valor) {
-  return {
-    igualA(esperado) {
-      if (!Object.is(valor, esperado)) {
-        throw new Error(`esperava ${formatar(esperado, 1)}, recebi ${formatar(valor, 1)}`);
-      }
-    },
-    pareceCom(esperado) {
-      if (!iguaisProfundo(valor, esperado)) {
-        throw new Error(`esperava ${formatar(esperado, 1)}\nrecebi   ${formatar(valor, 1)}`);
-      }
-    },
-    verdadeiro() {
-      if (valor !== true) throw new Error(`esperava true, recebi ${formatar(valor, 1)}`);
-    },
-    contem(item) {
-      const tem = Array.isArray(valor) ? valor.some((v) => iguaisProfundo(v, item)) : String(valor).includes(item);
-      if (!tem) throw new Error(`esperava que ${formatar(valor, 1)} contivesse ${formatar(item, 1)}`);
-    },
-  };
-}
-
-async function rodarUmTeste({ preludio = '', codigoUsuario, codigoTeste }) {
-  const fabrica = new Function(
-    'esperar',
-    'console',
-    `return (async () => {
-${preludio}
-${codigoUsuario}
-${codigoTeste}
-})();`,
-  );
-  // console silencioso: o print do usuário não polui a lista de testes
-  await fabrica(esperar, { log() {}, error() {}, warn() {}, info() {}, debug() {} });
-}
+import { rodarUmTeste } from './assercoes.js';
 
 export function criarExercicio(exercicio, { aoResolver } = {}) {
   const raiz = document.createElement('section');

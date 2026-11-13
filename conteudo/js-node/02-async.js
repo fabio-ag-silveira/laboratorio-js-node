@@ -60,7 +60,7 @@ Use o painel abaixo para ver isso acontecendo passo a passo.`,
         },
         {
           t: 'visual',
-          componente: 'event-loop',
+          componente: 'js-node/event-loop',
         },
         {
           t: 'codigo',
@@ -395,6 +395,7 @@ esperar(gasto < 300).verdadeiro()`,
           t: 'codigo',
           titulo: 'Situação 1: promise sem catch',
           rodar: 'node',
+          esperaFalha: true,
           codigo: `function arriscado() {
   return Promise.reject(new Error('o modelo não carregou'));
 }

@@ -1,12 +1,12 @@
 /**
- * Execução de código — no navegador e no Node.
+ * Execução de código — no navegador e no servidor.
  *
  * Navegador: montamos uma função assíncrona a partir do texto e passamos um
  *            `console` falso, que em vez de imprimir no devtools manda as
  *            linhas para a nossa caixa de saída.
  *
- * Node:      mandamos o texto para POST /api/executar, e o servidor roda num
- *            processo separado (veja servidor/executor.js).
+ * Servidor:  Node, Python e C# vão para POST /api/executar, e o servidor roda
+ *            num processo separado (veja servidor/executores/).
  */
 
 /** Representação legível de qualquer valor — um util.inspect() de bolso. */
@@ -98,37 +98,73 @@ export async function rodarNoNavegador(codigo, escrever) {
   }
 }
 
-/** Manda o código para o servidor executar num processo Node de verdade. */
-export async function rodarNoNode(codigo, escrever) {
+/** Nome amigável de cada destino de execução, para etiquetas e rodapés. */
+export const ALVOS = {
+  browser: { rotulo: 'navegador', onde: 'navegador', lang: 'js' },
+  node: { rotulo: 'node', onde: 'processo Node', lang: 'js' },
+  python: { rotulo: 'python', onde: 'processo Python', lang: 'python' },
+  csharp: { rotulo: 'c#', onde: 'dotnet run', lang: 'csharp' },
+};
+
+/**
+ * Manda o código para o servidor executar num processo de verdade (Node,
+ * Python ou C#) e escreve o resultado na caixa de saída.
+ *
+ * A resposta vem como uma lista de PARTES, na ordem em que o programa as
+ * produziu: texto, imagem, texto, imagem... É isso que deixa um bloco de
+ * Python intercalar `print` com `lab.mostrar(img)`.
+ */
+export async function rodarNoServidor(linguagem, codigo, saida, tempo) {
   try {
     const resposta = await fetch('/api/executar', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ codigo }),
+      body: JSON.stringify({ linguagem, codigo, tempo }),
     });
 
     const r = await resposta.json();
+    if (!resposta.ok) {
+      saida.escrever('erro', r.erro ?? `HTTP ${resposta.status}`);
+      return { ok: false, ms: 0 };
+    }
 
-    // No Windows a saída vem com CRLF; sem o \r fica um caractere invisível
-    // sobrando no fim de cada linha.
     const emLinhas = (texto) => texto.replace(/\r/g, '').replace(/\n$/, '').split('\n');
 
-    if (r.saida) for (const linha of emLinhas(r.saida)) escrever('log', linha);
-    if (r.erro) for (const linha of emLinhas(r.erro)) escrever('erro', linha);
-    if (r.expirou) escrever('aviso', '⏱ tempo esgotado (5s) — o processo foi encerrado');
-    if (r.cortado) escrever('aviso', '✂ saída muito longa, cortada');
-    if (!r.saida && !r.erro) escrever('info', '(nenhuma saída — faltou um console.log?)');
+    for (const parte of r.partes ?? []) {
+      if (parte.tipo === 'imagem') saida.imagem(parte.url, parte.titulo);
+      else for (const linha of emLinhas(parte.texto)) saida.escrever('log', linha);
+    }
+
+    if (r.erro) {
+      // Processo que terminou bem mas escreveu no stderr: são avisos
+      // (bibliotecas de ML adoram), não erros.
+      const nivel = r.codigoSaida === 0 ? 'aviso' : 'erro';
+      for (const linha of emLinhas(r.erro)) saida.escrever(nivel, linha);
+    }
+    if (r.instalar) saida.escrever('info', `Para instalar:  ${r.instalar}`);
+    if (r.expirou) {
+      saida.escrever('aviso', `⏱ tempo esgotado (${Math.round(r.tempoLimiteMs / 1000)}s) — o processo foi encerrado`);
+    }
+    if (r.cortado) saida.escrever('aviso', '✂ saída muito longa, cortada');
+    if (!r.partes?.length && !r.erro) saida.escrever('info', '(nenhuma saída — faltou um print?)');
 
     return { ok: r.codigoSaida === 0, ms: r.ms };
   } catch (erro) {
-    escrever('erro', `Não consegui falar com o servidor: ${erro.message}`);
+    saida.escrever('erro', `Não consegui falar com o servidor: ${erro.message}`);
     return { ok: false, ms: 0 };
   }
 }
 
+/** Roda no destino certo: 'browser' fica na aba, o resto vai para o servidor. */
+export function rodar(alvo, codigo, saida, tempo) {
+  return alvo === 'browser'
+    ? rodarNoNavegador(codigo, saida.escrever)
+    : rodarNoServidor(alvo, codigo, saida, tempo);
+}
+
 /**
  * Monta a caixa de saída e devolve utilitários para escrever nela.
- * Reutilizada pelos blocos de código, pelo playground e pelos exercícios.
+ * Reutilizada pelos blocos de código e pelo playground.
  */
 export function criarSaida() {
   const caixa = document.createElement('div');
@@ -139,6 +175,9 @@ export function criarSaida() {
   rodape.className = 'saida-rodape';
   rodape.hidden = true;
 
+  // Imagens seguidas ficam lado a lado numa mesma galeria.
+  let galeria = null;
+
   return {
     caixa,
     rodape,
@@ -146,19 +185,45 @@ export function criarSaida() {
       caixa.innerHTML = '';
       caixa.hidden = false;
       rodape.hidden = true;
+      galeria = null;
     },
     escrever(nivel, texto) {
+      galeria = null;
       const linha = document.createElement('div');
       linha.className = 'saida-linha' + (nivel === 'erro' ? ' saida-erro' : '');
       if (nivel === 'info') linha.classList.add('saida-info');
-      if (nivel === 'aviso') linha.style.color = 'var(--amarelo)';
+      if (nivel === 'aviso') linha.classList.add('saida-aviso');
       linha.textContent = texto;
       caixa.append(linha);
       caixa.scrollTop = caixa.scrollHeight;
     },
+    imagem(url, titulo) {
+      if (!galeria) {
+        galeria = document.createElement('div');
+        galeria.className = 'saida-galeria';
+        caixa.append(galeria);
+      }
+      const figura = document.createElement('figure');
+      figura.className = 'saida-figura';
+      const img = document.createElement('img');
+      img.src = url;
+      img.alt = titulo || 'imagem gerada pelo código';
+      img.title = 'clique para ampliar';
+      // clicar alterna entre "cabe na galeria" e "largura total"
+      img.addEventListener('click', () => figura.classList.toggle('ampliada'));
+      figura.append(img);
+      if (titulo) {
+        const legenda = document.createElement('figcaption');
+        legenda.textContent = titulo;
+        figura.append(legenda);
+      }
+      galeria.append(figura);
+    },
     finalizar(resultado, onde) {
       rodape.hidden = false;
-      rodape.textContent = `${onde} · ${resultado.ms}ms${resultado.ok ? '' : ' · terminou com erro'}`;
+      const tempo = resultado.ms >= 1000 ? `${(resultado.ms / 1000).toFixed(1)}s` : `${resultado.ms}ms`;
+      rodape.textContent = `${onde} · ${tempo}${resultado.ok ? '' : ' · terminou com erro'}`;
     },
   };
 }
+

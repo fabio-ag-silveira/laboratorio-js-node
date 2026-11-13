@@ -1,0 +1,500 @@
+/* ==========================================================================
+   Multi-trilha: página inicial, lateral, saída com imagem, quiz, revisão.
+   Carregado depois de estilo.css, de onde vêm as variáveis de cor.
+   ========================================================================== */
+
+/* ---------- página inicial ------------------------------------------- */
+
+.inicio-cabecalho {
+  margin-bottom: 26px;
+}
+.inicio-cabecalho h1 {
+  margin: 0 0 6px;
+  font-size: 34px;
+  letter-spacing: -0.02em;
+  font-weight: 680;
+}
+.inicio-cabecalho p {
+  margin: 0;
+  color: var(--texto-2);
+  font-size: 16px;
+  max-width: 720px;
+}
+
+.continuar {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 14px 18px;
+  margin-bottom: 26px;
+  border: 1px solid var(--destaque);
+  border-radius: var(--raio-g);
+  background: var(--destaque-suave);
+  color: var(--texto);
+}
+.continuar:hover {
+  text-decoration: none;
+  filter: brightness(1.08);
+}
+.continuar span {
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-weight: 700;
+  color: var(--destaque);
+}
+.continuar strong {
+  font-size: 15.5px;
+  font-weight: 620;
+}
+.continuar em {
+  margin-left: auto;
+  font-style: normal;
+  font-size: 13px;
+  color: var(--texto-2);
+}
+
+.trilhas-grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 16px;
+}
+.trilha-cartao {
+  display: flex;
+  flex-direction: column;
+  padding: 18px 18px 16px;
+  border: 1px solid var(--borda);
+  border-top: 3px solid var(--cor-trilha, var(--destaque));
+  border-radius: var(--raio-g);
+  background: var(--fundo-2);
+  color: var(--texto);
+  transition: transform 0.14s, border-color 0.14s, box-shadow 0.14s;
+}
+a.trilha-cartao:hover {
+  text-decoration: none;
+  transform: translateY(-2px);
+  box-shadow: var(--sombra);
+  border-color: var(--cor-trilha, var(--destaque));
+}
+.trilha-cartao.em-breve {
+  opacity: 0.72;
+}
+.trilha-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.trilha-icone {
+  font-size: 26px;
+  line-height: 1;
+}
+.trilha-selo {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 2.5px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--borda-forte);
+  color: var(--texto-3);
+}
+.trilha-selo.feito {
+  color: var(--verde);
+  border-color: var(--verde);
+}
+.trilha-cartao h3 {
+  margin: 0 0 4px;
+  font-size: 17.5px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+.trilha-cartao p {
+  margin: 0 0 10px;
+  font-size: 13.5px;
+  color: var(--texto-2);
+  line-height: 1.5;
+  flex: 1;
+}
+.trilha-ponte {
+  align-self: flex-start;
+  font-size: 11.5px;
+  color: var(--cor-trilha, var(--destaque));
+  border: 1px solid color-mix(in srgb, var(--cor-trilha, var(--destaque)) 45%, transparent);
+  border-radius: 999px;
+  padding: 1.5px 9px;
+  margin-bottom: 12px;
+}
+.trilha-barra {
+  height: 5px;
+  border-radius: 3px;
+  background: var(--borda);
+  overflow: hidden;
+}
+.trilha-barra i {
+  display: block;
+  height: 100%;
+  background: var(--cor-trilha, var(--verde));
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+.trilha-rodape {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 7px;
+  font-size: 12px;
+  color: var(--texto-3);
+}
+.trilha-previsto {
+  margin: 0;
+  padding-left: 17px;
+  font-size: 12.5px;
+  color: var(--texto-3);
+  line-height: 1.55;
+}
+
+.ambiente {
+  margin-top: 30px;
+  padding: 16px 18px;
+  border: 1px solid var(--borda);
+  border-radius: var(--raio-g);
+  background: var(--fundo-2);
+}
+.ambiente h2 {
+  margin: 0 0 10px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--texto-3);
+  font-weight: 700;
+}
+.ambiente-nota {
+  margin: 0;
+  font-size: 13px;
+  color: var(--texto-3);
+}
+.ambiente-linha {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  flex-wrap: wrap;
+  padding: 4px 0;
+  font-size: 13.5px;
+}
+.ambiente-linha strong {
+  min-width: 74px;
+  font-weight: 620;
+}
+.ambiente-linha span {
+  color: var(--texto-2);
+}
+.ambiente-linha.ok .ambiente-marca {
+  color: var(--verde);
+}
+.ambiente-linha.falta .ambiente-marca {
+  color: var(--amarelo);
+}
+.ambiente-linha code,
+.ambiente-pacotes {
+  font-family: var(--mono);
+  font-size: 12px;
+}
+.ambiente-linha code {
+  background: var(--fundo-3);
+  border: 1px solid var(--borda);
+  border-radius: 5px;
+  padding: 1.5px 7px;
+  color: var(--amarelo);
+  user-select: all;
+}
+.ambiente-pacotes {
+  display: block;
+  margin: 0 0 6px 92px;
+  color: var(--texto-3);
+  line-height: 1.6;
+}
+.ambiente-pacotes em {
+  color: var(--amarelo);
+  font-style: normal;
+}
+
+/* ---------- lateral dentro e fora de trilha --------------------------- */
+
+.indice-voltar {
+  display: block;
+  padding: 2px 10px 8px;
+  font-size: 12.5px;
+  color: var(--texto-3) !important;
+}
+.indice-voltar:hover {
+  color: var(--destaque) !important;
+  background: none !important;
+}
+.indice-trilha-atual {
+  padding: 2px 10px 6px;
+  font-size: 15px;
+  font-weight: 650;
+}
+.indice a.indice-trilha,
+.indice span.indice-trilha {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  color: var(--texto-2);
+}
+.indice span.indice-trilha {
+  opacity: 0.55;
+}
+.indice-trilha em {
+  margin-left: auto;
+  white-space: nowrap;
+  font-style: normal;
+  font-size: 11.5px;
+  color: var(--texto-3);
+  font-family: var(--mono);
+}
+.indice-icone {
+  width: 18px;
+  text-align: center;
+}
+
+/* ---------- etiquetas e saída ---------------------------------------- */
+
+.etiqueta-python {
+  color: var(--destaque);
+  border-color: color-mix(in srgb, var(--destaque) 40%, transparent);
+}
+.etiqueta-csharp {
+  color: var(--roxo);
+  border-color: color-mix(in srgb, var(--roxo) 40%, transparent);
+}
+.etiqueta-sql {
+  color: var(--rosa);
+  border-color: color-mix(in srgb, var(--rosa) 40%, transparent);
+}
+
+.saida {
+  max-height: 720px;
+}
+.saida-aviso {
+  color: var(--amarelo);
+}
+.saida-galeria {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px 16px;
+  align-items: flex-start;
+}
+.saida-figura {
+  margin: 0;
+  flex: 1 1 260px;
+  max-width: 460px;
+  min-width: 0;
+}
+.saida-figura.ampliada {
+  flex-basis: 100%;
+  max-width: 100%;
+}
+.saida-figura img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  border: 1px solid var(--borda);
+  cursor: zoom-in;
+  background: var(--fundo-3);
+}
+.saida-figura.ampliada img {
+  cursor: zoom-out;
+}
+.saida-figura figcaption {
+  margin-top: 5px;
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--texto-3);
+  text-align: center;
+}
+
+.visual-casca {
+  margin: 22px 0;
+  padding: 26px;
+  border: 1px dashed var(--borda-forte);
+  border-radius: var(--raio-g);
+  color: var(--texto-3);
+  font-size: 13.5px;
+  text-align: center;
+}
+.visual-erro {
+  color: var(--vermelho);
+  border-color: var(--vermelho);
+}
+
+.nota-campo {
+  --cor-nota: var(--verde);
+}
+.nota-entrevista {
+  --cor-nota: var(--roxo);
+}
+
+.tabela-prosa td:nth-child(n + 2) {
+  font-family: var(--sans);
+  font-size: 13.5px;
+}
+
+/* ---------- quiz ------------------------------------------------------ */
+
+.quiz {
+  margin: 26px 0;
+  border: 1px solid var(--borda-forte);
+  border-radius: var(--raio-g);
+  background: var(--fundo-2);
+  overflow: hidden;
+}
+.quiz.acertou {
+  border-color: var(--verde);
+}
+.quiz.errou {
+  border-color: var(--amarelo);
+}
+.quiz-topo {
+  padding: 9px 16px;
+  background: var(--fundo-3);
+  border-bottom: 1px solid var(--borda);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--texto-3);
+}
+.quiz-pergunta {
+  padding: 15px 18px 4px;
+  font-size: 15px;
+}
+.quiz-pergunta > :last-child {
+  margin-bottom: 8px;
+}
+.quiz-opcoes {
+  display: grid;
+  gap: 7px;
+  padding: 4px 16px 16px;
+}
+.quiz-opcao {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  width: 100%;
+  text-align: left;
+  padding: 10px 13px;
+  border-radius: 9px;
+  border: 1px solid var(--borda);
+  background: var(--fundo);
+  color: var(--texto);
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  cursor: pointer;
+}
+.quiz-opcao:hover:not(:disabled) {
+  border-color: var(--destaque);
+}
+.quiz-opcao:disabled {
+  cursor: default;
+  opacity: 0.75;
+}
+.quiz-opcao .prosa p {
+  margin: 0;
+}
+.quiz-letra {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid var(--borda-forte);
+  display: grid;
+  place-items: center;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--texto-3);
+}
+.quiz-opcao.certa {
+  opacity: 1;
+  border-color: var(--verde);
+  background: color-mix(in srgb, var(--verde) 12%, transparent);
+}
+.quiz-opcao.certa .quiz-letra {
+  background: var(--verde);
+  border-color: var(--verde);
+  color: var(--fundo);
+}
+.quiz-opcao.errada {
+  opacity: 1;
+  border-color: var(--vermelho);
+  background: color-mix(in srgb, var(--vermelho) 10%, transparent);
+}
+.quiz-explicacao {
+  padding: 13px 18px;
+  border-top: 1px solid var(--borda);
+  font-size: 14px;
+  background: var(--fundo);
+}
+.quiz-explicacao p {
+  display: inline;
+}
+
+/* ---------- revisão e colinha ----------------------------------------- */
+
+.revisao-controles {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.revisao-filtro {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13.5px;
+  color: var(--texto-2);
+  cursor: pointer;
+}
+.revisao-placar {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--verde);
+}
+.revisao-origem {
+  display: block;
+  margin: 24px 0 -18px;
+  font-size: 12px;
+  color: var(--texto-3);
+}
+.colinha-titulo {
+  margin: 28px 0 10px;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--texto-3);
+}
+.vazio {
+  color: var(--texto-3);
+  padding: 30px 0;
+}
+
+@media (max-width: 760px) {
+  .inicio-cabecalho h1 {
+    font-size: 26px;
+  }
+  .ambiente-pacotes {
+    margin-left: 0;
+  }
+  .abas {
+    overflow-x: auto;
+  }
+}

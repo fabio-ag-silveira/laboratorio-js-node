@@ -58,7 +58,7 @@ Você não precisa decorar os 60. Precisa desses:`,
         },
         {
           t: 'visual',
-          componente: 'tabela-status',
+          componente: 'js-node/tabela-status',
         },
         {
           t: 'nota',
@@ -287,7 +287,7 @@ E relações aninham: \`GET /cameras/doca-01/deteccoes\`.`,
         },
         {
           t: 'visual',
-          componente: 'atalho-explorador',
+          componente: 'js-node/atalho-explorador',
         },
       ],
     },
@@ -366,6 +366,7 @@ app.listen(3000);`,
           t: 'codigo',
           titulo: 'Uma API REST completa em Express',
           rodar: 'node',
+          requer: ['express'],
           codigo: `import express from 'express';
 
 const app = express();
@@ -449,6 +450,7 @@ Logs, autenticação, CORS, parsing de corpo, medição de tempo — tudo isso �
           t: 'codigo',
           titulo: 'Middleware: log, autenticação e erro',
           rodar: 'node',
+          requer: ['express'],
           codigo: `import express from 'express';
 const app = express();
 app.use(express.json());

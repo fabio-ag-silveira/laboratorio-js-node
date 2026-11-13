@@ -2,3 +2,21 @@ node_modules/
 .env
 *.log
 .DS_Store
+
+# Fotos suas para os blocos de Python (lab.imagem). O repositório é público:
+# imagem de armadilha de cliente NUNCA entra no git.
+imagens/*
+!imagens/LEIA-ME.md
+
+# Pesos de modelos baixados (dezenas de MB cada, e baixam de novo sozinhos)
+modelos/
+*.pt
+*.onnx
+*.engine
+
+# Cache do Python
+__pycache__/
+*.pyc
+
+# Pasta de trabalho do executor de Node (arquivos temporários)
+.execucao/

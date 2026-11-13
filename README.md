@@ -1,11 +1,11 @@
-# Laboratório JS + Node
+# Laboratório Dev
 
-Uma ferramenta local para aprender **JavaScript, Node.js e APIs** — escrita para quem
-já programa em Python e quer o caminho mais curto até o fundamental.
+Uma ferramenta local de estudo em que **todo código da tela executa de verdade** — no
+navegador, num processo Node, num processo Python com a sua GPU, ou num `dotnet run`.
 
-Não é um curso em vídeo nem um site de exercícios: é um laboratório que roda na sua
-máquina, onde **todo código da tela executa de verdade** — no navegador ou num processo
-Node real.
+Começou como laboratório de JavaScript e Node para quem vem do Python e está crescendo
+para cobrir a stack inteira: visão computacional, React, React Native, C# .NET,
+PostgreSQL, Python para IA e Azure.
 
 ## Rodar
 
@@ -13,83 +13,91 @@ Node real.
 npm start
 ```
 
-Depois abra <http://localhost:4000>. Não há nada para instalar: o laboratório inteiro
-usa só a biblioteca padrão do Node. (Só a lição de Express pede `npm install express`.)
+Depois abra <http://localhost:4000>. O núcleo usa só a biblioteca padrão do Node: não há
+nada para instalar. Outra porta, se precisar: `PORTA=5000 npm start`.
 
-Outra porta, se precisar:
+## Trilhas
 
-```bash
-PORTA=5000 npm start
+| Trilha | Estado | Executa em |
+|---|---|---|
+| JavaScript e Node | pronta (24 lições) | navegador e Node |
+| Visão Computacional | em construção | navegador (canvas) e Python (OpenCV, PyTorch) |
+| React | em construção | prévia ao vivo |
+| React Native | em construção | prévia em moldura de celular |
+| PostgreSQL | em construção | Postgres embutido |
+| C# e .NET | em construção | `dotnet run` (SDK 10+) |
+| Python para IA | em construção | Python |
+| Azure e Azure DevOps | em construção | diagramas e simuladores |
+
+Cada trilha parte do que você já sabe: Python → JavaScript e C#, Flutter → React Native,
+MySQL → PostgreSQL, Cloudflare → Azure.
+
+## Ferramentas
+
+- **Playground** — escreva e rode JavaScript (navegador ou Node), Python e C#.
+- **Explorador de API** — um mini-Postman apontado para uma API REST de treino que sobe
+  junto com o laboratório.
+- **Colinha** — todas as tabelas de referência das trilhas, com busca.
+- **Revisão** — perguntas sorteadas das lições que você já concluiu.
+
+## Python com imagem
+
+Os blocos de Python rodam no Python da sua máquina e podem mandar imagens para a tela:
+
+```python
+import cv2, lab
+
+img = lab.amostra("armadilha")          # imagem sintética, com gabarito conhecido
+bordas = cv2.Canny(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY), 60, 140)
+lab.mostrar(img, bordas, titulos=["original", "bordas"])
 ```
 
-## O que tem dentro
+Para usar fotos suas, copie-as para `imagens/` e leia com `lab.imagem("foto.jpg")`. Essa
+pasta está no `.gitignore`: o repositório é público, e foto de campo ou de cliente fica só
+na sua máquina. A página inicial mostra o que está instalado (Python, pacotes, SDK do .NET)
+e o comando para instalar o que faltar.
 
-**Trilha — 24 lições, 6 módulos.** Toda lição traz o "em Python você faria assim" ao
-lado do JavaScript. Cerca de 6 a 8 horas de estudo ativo até o fim do módulo 4, que já
-é o suficiente para construir e manter um backend.
-
-| Módulo | Assunto |
-|---|---|
-| 0 | Mapa da trilha e colinha de tradução Python → JS |
-| 1 | JavaScript essencial: tipos, funções, arrays, objetos, as pegadinhas |
-| 2 | Assincronismo: event loop, promises, `async/await`, erros |
-| 3 | Node: módulos, arquivos, npm, `process` e CLI |
-| 4 | Backend: HTTP na unha, REST, Express, middleware, `fetch` |
-| 5 | Testes, Node orquestrando Python, e o projeto final |
-
-**Playground.** Escreva JavaScript e rode com um clique — no navegador (tem `fetch` e
-`document`) ou no Node (tem `import`, `fs`, `process`). Vem com exemplos prontos.
-
-**Explorador de API.** Um mini-Postman apontado para uma API REST de verdade que sobe
-junto com o laboratório. Dá para provocar 200, 201, 204, 400, 401, 404 e 500 e ver o
-que muda em cada um.
-
-**Visualizador do event loop.** Passo a passo, mostrando call stack, microtarefas,
-macrotarefas e saída — para entender por que a ordem de execução é aquela.
-
-**Exercícios corrigidos automaticamente.** Escreva a função, clique em rodar, veja
-verde ou vermelho com o motivo da falha. Tem dica e solução quando travar.
-
-**Progresso.** Fica salvo no navegador (`localStorage`).
-
-## O código é material de estudo
-
-O laboratório foi escrito para ser lido. Depois das lições correspondentes, abra:
-
-| Arquivo | O que ilustra |
-|---|---|
-| [`servidor/index.js`](servidor/index.js) | servidor HTTP sem framework, roteamento na mão |
-| [`servidor/api-lab.js`](servidor/api-lab.js) | uma API REST completa: validação, status, query |
-| [`servidor/executor.js`](servidor/executor.js) | `spawn` de subprocesso com timeout e limpeza |
-| [`servidor/estatico.js`](servidor/estatico.js) | servir arquivos, MIME types, path traversal |
-| [`teste/api-lab.test.js`](teste/api-lab.test.js) | testes de integração com `node --test` |
-| [`publico/js/`](publico/js/) | uma SPA sem framework: roteador, editor, renderizador |
-
-## Testes
+## Verificação
 
 ```bash
-npm test
+npm test            # API, formato de todas as lições e soluções dos exercícios
+npm run verificar   # executa todos os blocos de código de todas as trilhas
 ```
 
-Usa o executor nativo do Node (`node --test`) — sem Jest, sem Vitest, sem instalar nada.
+`npm run verificar -- visao` restringe a uma trilha.
 
 ## Estrutura
 
 ```
 estudos/
-├── servidor/      o servidor (HTTP, API de treino, executor de código)
-├── conteudo/      as lições, como dados — um arquivo por módulo
-├── publico/       a interface (HTML, CSS e JS sem build)
-└── teste/         testes da API
+├── conteudo/<trilha>/   lições como dados; cada pasta com index.js é uma trilha
+├── publico/             a interface (HTML, CSS e JS sem build)
+│   └── js/visuais/      componentes interativos, carregados sob demanda
+├── servidor/            HTTP, API de treino e executores de código
+│   ├── executores/      Node, Python e C# em processos separados
+│   └── apoio-python/    o módulo `lab` dos blocos de Python
+├── ferramentas/         verificação dos blocos
+└── teste/
 ```
 
-Para editar ou acrescentar uma lição, mexa nos arquivos de `conteudo/`. O formato é um
-objeto com blocos (`texto`, `codigo`, `py-js`, `nota`, `tabela`, `exercicio`, `visual`),
-e a interface sabe renderizar cada tipo.
+Para criar uma trilha, crie uma pasta em `conteudo/` com um `index.js` exportando
+`trilha`; ela é descoberta sozinha. Uma lição é uma lista de blocos: `texto`, `nota`,
+`codigo`, `comparacao`, `tabela`, `visual`, `quiz` e `exercicio`.
+
+## O código é material de estudo
+
+| Arquivo | O que ilustra |
+|---|---|
+| [`servidor/app.js`](servidor/app.js) | servidor HTTP sem framework, roteamento na mão |
+| [`servidor/api-lab.js`](servidor/api-lab.js) | API REST completa: validação, status, query |
+| [`servidor/executores/processo.js`](servidor/executores/processo.js) | subprocesso com tempo limite, protocolo de saída e limpeza |
+| [`servidor/estatico.js`](servidor/estatico.js) | servir arquivos, tipos MIME, path traversal |
+| [`teste/`](teste/) | testes de integração e testes gerados a partir de dados, com `node --test` |
+| [`publico/js/`](publico/js/) | uma SPA sem framework: roteador, editor, renderizador |
 
 ## Uma nota sobre o executor
 
-O botão "Rodar no Node" executa o código num processo separado, com limite de 5
-segundos. **Não é uma sandbox de segurança** — o código roda com as suas permissões,
-como qualquer script que você mesmo escrevesse. Por isso o servidor escuta apenas em
-`127.0.0.1`. Não exponha na rede.
+Os botões de rodar executam o código em processos separados, com tempo limite. **Não é
+uma sandbox de segurança** — o código roda com as suas permissões, como qualquer script
+que você mesmo escrevesse. Por isso o servidor escuta apenas em `127.0.0.1`. Não exponha
+na rede.

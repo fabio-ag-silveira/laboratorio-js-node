@@ -27,7 +27,13 @@ function embutido(txt) {
   s = escapar(s);
   s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
   s = s.replace(/(^|[\s(])\*([^*\n]+)\*/g, '$1<em>$2</em>');
-  s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+  // Link externo abre em outra aba, para a lição não sumir de baixo de você.
+  // rel="noopener" impede a página aberta de mexer nesta pelo window.opener.
+  s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, texto, url) =>
+    /^https?:/.test(url)
+      ? `<a href="${url}" target="_blank" rel="noopener">${texto}</a>`
+      : `<a href="${url}">${texto}</a>`,
+  );
 
   // devolver os trechos protegidos
   const devolver = new RegExp(SEN + '(\\d+)' + SEN, 'g');
