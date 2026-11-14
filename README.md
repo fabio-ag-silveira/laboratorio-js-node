@@ -21,7 +21,7 @@ nada para instalar. Outra porta, se precisar: `PORTA=5000 npm start`.
 | Trilha | Estado | Executa em |
 |---|---|---|
 | JavaScript e Node | pronta (24 lições) | navegador e Node |
-| Visão Computacional | 26 lições: clássico, deep learning, detecção, avaliação e laboratório de treino; parte avançada em construção | navegador (canvas) e Python (OpenCV, PyTorch, Ultralytics) |
+| Visão Computacional | 50 lições em 13 módulos: clássico, deep learning, detecção, avaliação, laboratório de treino, objetos pequenos, dados, segmentação e rastreamento, modelos de fundação, produção, estado da arte e entrevista | navegador (canvas) e Python (OpenCV, PyTorch, Ultralytics) |
 | React | em construção | prévia ao vivo |
 | React Native | em construção | prévia em moldura de celular |
 | PostgreSQL | em construção | Postgres embutido |

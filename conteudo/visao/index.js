@@ -15,6 +15,10 @@ import { modulo as avaliacao } from './05-avaliacao.js';
 import { modulo as laboratorio } from './06-laboratorio.js';
 import { modulo as pequenos } from './07-pequenos.js';
 import { modulo as dados } from './08-dados.js';
+import { modulo as alemDaCaixa } from './09-alem-da-caixa.js';
+import { modulo as fundacao } from './10-fundacao.js';
+import { modulo as producao } from './11-producao.js';
+import { modulo as fronteira } from './12-fronteira.js';
 
 export const trilha = {
   id: 'visao',
@@ -24,5 +28,5 @@ export const trilha = {
   icone: '👁️',
   cor: '#5ec9a7',
   ponte: 'reforço e aprofundamento',
-  modulos: [partida, imagem, classico, aprendizado, deteccao, avaliacao, laboratorio, pequenos, dados],
+  modulos: [partida, imagem, classico, aprendizado, deteccao, avaliacao, laboratorio, pequenos, dados, alemDaCaixa, fundacao, producao, fronteira],
 };
