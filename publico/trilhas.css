@@ -609,3 +609,34 @@ a.trilha-cartao:hover {
     border-bottom: 1px solid var(--borda);
   }
 }
+
+/* ---------- React Native: moldura de celular --------------------------- */
+
+.previa-celular {
+  display: grid;
+  place-items: center;
+  padding: 16px 8px;
+  background: var(--fundo);
+}
+
+.previa-celular .previa-iframe {
+  width: 300px;
+  height: 560px;
+  border: 8px solid var(--borda-forte);
+  border-radius: 30px;
+  background: var(--fundo-2);
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.25);
+}
+
+.previa-celular .previa-erro {
+  max-width: 300px;
+}
+
+.previa-nativa .previa-corpo {
+  grid-template-columns: minmax(0, 1fr) 336px;
+}
+@container previa (max-width: 760px) {
+  .previa-nativa .previa-corpo {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

@@ -41,7 +41,8 @@ const pausa = (ms) => new Promise((r) => setTimeout(r, ms));
 const raiz = document.getElementById('raiz');
 
 // ---- o que um teste enxerga: a tela, como um usuário ----------------------
-const botoes = () => [...raiz.querySelectorAll('button')];
+// no React Native (react-native-web), um Pressable vira um <div> focável (tabindex="0")
+const botoes = () => [...raiz.querySelectorAll('button, [role="button"], div[tabindex="0"], div[aria-disabled="true"]')];
 const tela = {
   raiz,
   texto: () => raiz.innerText,
@@ -163,7 +164,9 @@ window.addEventListener('message', (ev) => {
   id = ev.data.id;
   origemDoPai = ev.origin;
   document.documentElement.style.cssText = ev.data.cores ?? '';
-  new ResizeObserver(() => enviar({ tipo: 'altura', px: document.documentElement.scrollHeight })).observe(document.body);
+  // React Native: a "tela" tem tamanho fixo, o do celular; quem rola é o app
+  if (ev.data.plataforma === 'nativo') document.documentElement.classList.add('nativo');
+  else new ResizeObserver(() => enviar({ tipo: 'altura', px: document.documentElement.scrollHeight })).observe(document.body);
   montar(ev.data);
 });
 

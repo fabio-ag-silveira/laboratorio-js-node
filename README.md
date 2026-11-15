@@ -23,7 +23,7 @@ nada para instalar. Outra porta, se precisar: `PORTA=5000 npm start`.
 | JavaScript e Node | pronta (24 lições) | navegador e Node |
 | Visão Computacional | 50 lições em 13 módulos: clássico, deep learning, detecção, avaliação, laboratório de treino, objetos pequenos, dados, segmentação e rastreamento, modelos de fundação, produção, estado da arte e entrevista | navegador (canvas) e Python (OpenCV, PyTorch, Ultralytics) |
 | React | 13 lições em 4 módulos: fundamentos, hooks, TypeScript, dados do servidor e React 19, projeto real; termina num painel que consome a API do laboratório | prévia ao vivo num iframe isolado, com exercícios testados clicando na tela |
-| React Native | em construção | prévia em moldura de celular |
+| React Native | 10 lições em 4 módulos: componentes nativos, Flexbox, listas, formulários, navegação, offline, câmera, publicação e o projeto de registro de capturas sem sinal | prévia numa moldura de celular (react-native-web); câmera e publicação como código para ler |
 | PostgreSQL | em construção | Postgres embutido |
 | C# e .NET | em construção | `dotnet run` (SDK 10+) |
 | Python para IA | em construção | Python |
@@ -75,8 +75,9 @@ const { testarTrilha } = await import('/js/dev/testar-previas.js');
 console.log(await testarTrilha('react'));
 ```
 
-As trilhas de React pedem `npm install` (React, React DOM e esbuild, dependências
-opcionais). Sem isso, o resto do laboratório funciona e a prévia mostra o comando.
+As trilhas de React e React Native pedem `npm install` (React, React DOM,
+react-native-web e esbuild). Sem isso, o resto do laboratório funciona e a prévia mostra
+o comando. Troque `'react'` por `'react-native'` para conferir a outra trilha.
 
 ## Estrutura
 

@@ -30,7 +30,7 @@ export async function testarTrilha(trilha, filtro = '') {
         const esperarTestes = async () => {
           p.querySelector('.testes').replaceChildren();
           bt.click();
-          for (let i = 0; i < 120; i++) {
+          for (let i = 0; i < 250; i++) {
             await pausa(100);
             if (p.querySelectorAll('.teste').length) break;
           }

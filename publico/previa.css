@@ -16,112 +16,117 @@ body {
   background: var(--fundo-2);
 }
 
-h1,
-h2,
-h3 {
-  margin: 0 0 8px;
-  line-height: 1.25;
-}
-h1 {
-  font-size: 20px;
-}
-h2 {
-  font-size: 17px;
-}
-h3 {
-  font-size: 15px;
-}
-p {
-  margin: 0 0 8px;
-}
+/* Os estilos de elementos valem só para a prévia web. No React Native
+   (html.nativo) quem estiliza é o próprio componente: uma regra genérica para
+   `input` aqui desfiguraria o Switch e o TextInput. */
+html:not(.nativo) {
+  h1,
+  h2,
+  h3 {
+    margin: 0 0 8px;
+    line-height: 1.25;
+  }
+  h1 {
+    font-size: 20px;
+  }
+  h2 {
+    font-size: 17px;
+  }
+  h3 {
+    font-size: 15px;
+  }
+  p {
+    margin: 0 0 8px;
+  }
 
-button {
-  font: inherit;
-  padding: 5px 12px;
-  border-radius: 6px;
-  border: 1px solid var(--borda-forte);
-  background: var(--fundo-3);
-  color: var(--texto);
-  cursor: pointer;
-}
-button:hover:not(:disabled) {
-  border-color: var(--destaque);
-}
-button:disabled {
-  opacity: 0.5;
-  cursor: default;
-}
+  button {
+    font: inherit;
+    padding: 5px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--borda-forte);
+    background: var(--fundo-3);
+    color: var(--texto);
+    cursor: pointer;
+  }
+  button:hover:not(:disabled) {
+    border-color: var(--destaque);
+  }
+  button:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
 
-input,
-select,
-textarea {
-  font: inherit;
-  padding: 5px 8px;
-  border-radius: 6px;
-  border: 1px solid var(--borda-forte);
-  background: var(--fundo);
-  color: var(--texto);
-}
-input[type="checkbox"],
-input[type="radio"],
-input[type="range"] {
-  padding: 0;
-  vertical-align: middle;
-}
+  input,
+  select,
+  textarea {
+    font: inherit;
+    padding: 5px 8px;
+    border-radius: 6px;
+    border: 1px solid var(--borda-forte);
+    background: var(--fundo);
+    color: var(--texto);
+  }
+  input[type="checkbox"],
+  input[type="radio"],
+  input[type="range"] {
+    padding: 0;
+    vertical-align: middle;
+  }
 
-table {
-  border-collapse: collapse;
-  width: 100%;
-}
-th,
-td {
-  text-align: left;
-  padding: 5px 8px;
-  border-bottom: 1px solid var(--borda);
-}
-th {
-  color: var(--texto-2);
-  font-weight: 600;
-  font-size: 12px;
-}
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  th,
+  td {
+    text-align: left;
+    padding: 5px 8px;
+    border-bottom: 1px solid var(--borda);
+  }
+  th {
+    color: var(--texto-2);
+    font-weight: 600;
+    font-size: 12px;
+  }
 
-ul,
-ol {
-  margin: 0 0 8px;
-  padding-left: 20px;
-}
+  ul,
+  ol {
+    margin: 0 0 8px;
+    padding-left: 20px;
+  }
 
-code {
-  font-family: ui-monospace, Consolas, monospace;
-  font-size: 12.5px;
-  background: var(--fundo-3);
-  padding: 1px 5px;
-  border-radius: 4px;
-}
+  code {
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: 12.5px;
+    background: var(--fundo-3);
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
 
-small {
-  color: var(--texto-2);
-}
+  small {
+    color: var(--texto-2);
+  }
 
-/* classes de conveniência usadas pelos exemplos */
-.alerta {
-  color: var(--vermelho);
-  font-weight: 600;
-}
-.suave {
-  color: var(--texto-2);
-}
-.cartao {
-  border: 1px solid var(--borda);
-  border-radius: 8px;
-  padding: 10px 12px;
-  margin-bottom: 8px;
-}
-.linha {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  flex-wrap: wrap;
+  /* classes de conveniência usadas pelos exemplos */
+  .alerta {
+    color: var(--vermelho);
+    font-weight: 600;
+  }
+  .suave {
+    color: var(--texto-2);
+  }
+  .cartao {
+    border: 1px solid var(--borda);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+  }
+  .linha {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
 }
 
 .lab-erro {
@@ -133,4 +138,22 @@ small {
   color: var(--vermelho);
   border: 1px solid var(--vermelho);
   background: color-mix(in srgb, var(--vermelho) 10%, transparent);
+}
+
+/* ---- React Native: a página inteira é a tela do celular ------------------ */
+html.nativo,
+html.nativo body {
+  height: 100%;
+}
+html.nativo body {
+  padding: 0;
+  overflow: hidden;
+  /* tela de celular: fundo claro fixo, como o padrão de um app novo */
+  background: #ffffff;
+  color: #111111;
+}
+html.nativo #raiz {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }

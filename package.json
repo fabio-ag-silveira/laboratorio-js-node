@@ -13,9 +13,10 @@
   "engines": {
     "node": ">=20"
   },
-  "optionalDependencies": {
+  "dependencies": {
     "esbuild": "^0.28.2",
     "react": "^19.3.1",
-    "react-dom": "^19.3.1"
+    "react-dom": "^19.3.1",
+    "react-native-web": "^0.21.4"
   }
 }

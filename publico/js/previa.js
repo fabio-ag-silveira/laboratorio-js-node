@@ -45,6 +45,8 @@ function previaDisponivel() {
   ambientePronto ??= fetch('/api/ambiente')
     .then((r) => r.json())
     .then((a) => a.previa ?? { ok: false, instalar: 'npm install' });
+  // servidor fora do ar por um instante: não guarda a falha para sempre
+  ambientePronto.catch(() => (ambientePronto = undefined));
   return ambientePronto;
 }
 
@@ -58,9 +60,10 @@ function coresDoTema() {
 export function criarPrevia(bloco, { aoResolver } = {}) {
   const id = `previa-${++contador}`;
   const ehExercicio = Array.isArray(bloco.testes) && bloco.testes.length > 0;
+  const nativo = bloco.plataforma === 'nativo'; // React Native: prévia numa moldura de celular
 
   const raiz = document.createElement('section');
-  raiz.className = 'previa' + (ehExercicio ? ' previa-exercicio' : '');
+  raiz.className = 'previa' + (ehExercicio ? ' previa-exercicio' : '') + (nativo ? ' previa-nativa' : '');
 
   const topo = document.createElement('div');
   topo.className = 'bloco-topo';
@@ -94,7 +97,7 @@ export function criarPrevia(bloco, { aoResolver } = {}) {
   const lado = document.createElement('div');
   lado.className = 'previa-lado';
   const moldura = document.createElement('div');
-  moldura.className = 'previa-moldura';
+  moldura.className = 'previa-moldura' + (nativo ? ' previa-celular' : '');
   moldura.textContent = 'a prévia aparece aqui';
   const consoleEl = document.createElement('div');
   consoleEl.className = 'previa-console';
@@ -205,7 +208,12 @@ export function criarPrevia(bloco, { aoResolver } = {}) {
     consoleEl.replaceChildren();
     consoleEl.hidden = true;
 
-    const disponivel = await previaDisponivel();
+    let disponivel;
+    try {
+      disponivel = await previaDisponivel();
+    } catch (e) {
+      return mostrarErro(`Não consegui falar com o servidor do laboratório: ${e.message}`, 'Ele está rodando? Toque em "Atualizar" para tentar de novo.');
+    }
     if (!disponivel.ok) {
       return mostrarErro('A prévia precisa das dependências opcionais do laboratório.', `Rode na pasta do projeto:  ${disponivel.instalar}
 e reinicie o servidor.`);
@@ -232,16 +240,16 @@ e reinicie o servidor.`);
     const novo = document.createElement('iframe');
     novo.className = 'previa-iframe';
     novo.title = `Prévia: ${bloco.titulo ?? ''}`;
-    novo.style.height = `${iframe?.style.height || `${bloco.altura ?? 160}px`}`;
+    if (!nativo) novo.style.height = `${iframe?.style.height || `${bloco.altura ?? 160}px`}`;
     novo.src = `${ORIGEM}/vendor/previa.html`;
     // o código só é enviado quando a página do iframe avisar que carregou
-    pendente = { tipo: 'montar', id, js: r.js, testes: comTestes ? bloco.testes : null, cores: coresDoTema() };
+    pendente = { tipo: 'montar', id, plataforma: nativo ? 'nativo' : 'web', js: r.js, testes: comTestes ? bloco.testes : null, cores: coresDoTema() };
     moldura.replaceChildren(novo);
     iframe = novo;
   }
 
   function aoReceber(ev) {
-    if (!iframe || ev.source !== iframe.contentWindow || ev.origin !== ORIGEM) return;
+    if (!iframe?.contentWindow || ev.source !== iframe.contentWindow || ev.origin !== ORIGEM) return;
     const m = ev.data;
     if (m?.tipo === 'carregada' && pendente) {
       iframe.contentWindow.postMessage(pendente, ORIGEM);
@@ -251,7 +259,7 @@ e reinicie o servidor.`);
     if (m?.previa !== id) return;
     if (m.tipo === 'console') escreverConsole(m.nivel, m.texto);
     else if (m.tipo === 'erro') escreverConsole('error', m.texto);
-    else if (m.tipo === 'altura') iframe.style.height = `${Math.min(Math.max(m.px, bloco.altura ?? 120), bloco.alturaMax ?? 560)}px`;
+    else if (m.tipo === 'altura' && !nativo) iframe.style.height = `${Math.min(Math.max(m.px, bloco.altura ?? 120), bloco.alturaMax ?? 560)}px`;
     else if (m.tipo === 'testes') mostrarTestes(m.resultados);
   }
   window.addEventListener('message', aoReceber);

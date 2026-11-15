@@ -40,6 +40,14 @@ const BIBLIOTECAS = {
   'react/jsx-dev-runtime': 'JsxDevRuntime',
 };
 
+/**
+ * `react-native` na prévia é o `react-native-web`: a mesma API (View, Text,
+ * StyleSheet, FlatList...) implementada com elementos do navegador. É o que o
+ * Expo usa para rodar um app no navegador. Só entra no pacote se estiver instalado.
+ */
+const APELIDOS_DE_PACOTE = { 'react-native': 'react-native-web' };
+const pacoteDe = (nome) => APELIDOS_DE_PACOTE[nome] ?? nome;
+
 const arquivoDe = (nome) => nome.replaceAll('/', '-') + '.js';
 
 function tem(pacote) {
@@ -50,6 +58,8 @@ function tem(pacote) {
     return false;
   }
 }
+
+if (tem('react-native-web')) BIBLIOTECAS['react-native'] = 'ReactNative';
 
 export function previaDisponivel() {
   return tem('esbuild') && tem('react') && tem('react-dom');
@@ -69,7 +79,7 @@ let pacotePronto;
 async function empacotar() {
   const { build } = await esbuild();
   const entrada = Object.entries(BIBLIOTECAS)
-    .map(([nome, apelido]) => `export * as ${apelido} from ${JSON.stringify(nome)};`)
+    .map(([nome, apelido]) => `export * as ${apelido} from ${JSON.stringify(pacoteDe(nome))};`)
     .join('\n');
 
   const resultado = await build({
@@ -88,9 +98,9 @@ async function empacotar() {
 
 /** Quais nomes cada biblioteca exporta. Lido do próprio pacote, sem lista fixa. */
 async function nomesExportados(nome) {
-  const modulo = await import(nome);
+  const modulo = await import(pacoteDe(nome));
   const alvo = modulo.default && typeof modulo.default === 'object' ? modulo.default : modulo;
-  return Object.keys(alvo).filter((k) => k !== 'default' && /^[A-Za-z_$][\w$]*$/.test(k));
+  return Object.keys(alvo).filter((k) => k !== 'default' && k !== '__esModule' && /^[A-Za-z_$][\w$]*$/.test(k));
 }
 
 async function fachada(nome) {
