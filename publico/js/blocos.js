@@ -13,6 +13,7 @@ import { criarEditor } from './editor.js';
 import { criarSaida, rodar, ALVOS } from './execucao.js';
 import { criarExercicio } from './exercicio.js';
 import { criarPrevia } from './previa.js';
+import { criarDesafioSQL } from './desafio-sql.js';
 
 function escaparHtml(t) {
   return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -258,6 +259,8 @@ export function renderizarBloco(bloco, contexto = {}) {
       return criarExercicio(bloco, contexto);
     case 'previa':
       return criarPrevia(bloco, contexto);
+    case 'desafio-sql':
+      return criarDesafioSQL(bloco, contexto);
     default:
       return document.createComment(`bloco desconhecido: ${bloco.t}`);
   }

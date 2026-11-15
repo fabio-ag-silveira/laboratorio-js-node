@@ -22,6 +22,7 @@ import { createRequire } from 'node:module';
 import { carregarTrilhas } from '../conteudo/index.js';
 import { criarServidor } from '../servidor/app.js';
 import { executar, ambiente } from '../servidor/executores/index.js';
+import { executarSQL, sqlDisponivel } from '../servidor/sql/index.js';
 
 const argumentos = process.argv.slice(2);
 const incluirLentos = argumentos.includes('--lentos');
@@ -89,7 +90,9 @@ for (const { onde, bloco } of blocos) {
   const faltaNpm = (bloco.requer ?? []).filter((p) => !temNpm(p));
   const faltaPy = (bloco.requerPython ?? []).filter((p) => !pacotesPython[APELIDOS[p] ?? p]);
   const semLinguagem =
-    (bloco.rodar === 'python' && !amb.python.ok) || (bloco.rodar === 'csharp' && !amb.dotnet.ok);
+    (bloco.rodar === 'python' && !amb.python.ok) ||
+    (bloco.rodar === 'csharp' && !amb.dotnet.ok) ||
+    (bloco.rodar === 'sql' && !sqlDisponivel());
 
   const lento = bloco.lento && !incluirLentos;
   if (faltaNpm.length || faltaPy.length || semLinguagem || lento) {
@@ -103,10 +106,13 @@ for (const { onde, bloco } of blocos) {
     continue;
   }
 
-  const r =
-    bloco.rodar === 'browser'
-      ? await rodarComoNavegador(bloco.codigo)
-      : await executar(bloco.rodar, bloco.codigo, bloco.tempo);
+  let r;
+  if (bloco.rodar === 'browser') r = await rodarComoNavegador(bloco.codigo);
+  else if (bloco.rodar === 'sql') {
+    // o executor de SQL fala outra língua: traduz para o formato dos demais
+    const s = await executarSQL(bloco.codigo);
+    r = { codigoSaida: s.ok ? 0 : 1, expirou: s.expirou, erro: s.erro?.mensagem ?? '', ms: s.ms };
+  } else r = await executar(bloco.rodar, bloco.codigo, bloco.tempo);
 
   const terminouBem = r.codigoSaida === 0 && !r.expirou;
   const passou = bloco.esperaFalha ? !terminouBem : terminouBem;

@@ -267,6 +267,20 @@ servidor.listen(0, async () => {
 });`,
   },
   {
+    nome: 'Consulta (SQL)',
+    alvo: 'sql',
+    codigo: `-- O banco do laboratório: usinas, talhoes, armadilhas, capturas, deteccoes, tecnicos.
+-- Cada execução roda numa cópia: pode alterar e apagar à vontade.
+SELECT u.nome AS usina, count(DISTINCT a.id) AS armadilhas, count(d.id) AS insetos
+FROM usinas u
+LEFT JOIN talhoes t    ON t.usina_id = u.id
+LEFT JOIN armadilhas a ON a.talhao_id = t.id
+LEFT JOIN capturas c   ON c.armadilha_id = a.id
+LEFT JOIN deteccoes d  ON d.captura_id = c.id
+GROUP BY u.nome
+ORDER BY insetos DESC;`,
+  },
+  {
     nome: 'Imagem (Python)',
     alvo: 'python',
     codigo: `import cv2
@@ -307,7 +321,7 @@ function telaPlayground() {
   const seletor = document.createElement('div');
   seletor.className = 'seletor-alvo';
   const botoesAlvo = {};
-  for (const alvo of ['browser', 'node', 'python', 'csharp']) {
+  for (const alvo of ['browser', 'node', 'python', 'csharp', 'sql']) {
     const bt = document.createElement('button');
     bt.textContent = ALVOS[alvo].rotulo;
     bt.addEventListener('click', () => trocarAlvo(alvo));

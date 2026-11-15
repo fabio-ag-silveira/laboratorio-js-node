@@ -328,3 +328,82 @@ canvas.mira {
   margin-top: 10px;
   font-size: 13px;
 }
+
+/* ---------- SQL: junções ------------------------------------------------ */
+
+.juncoes-corpo {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.juncoes-origem {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.juncoes-op {
+  align-self: center;
+  padding: 4px 10px;
+  border-radius: 99px;
+  border: 1px solid var(--destaque);
+  color: var(--destaque);
+  font: 600 11.5px/1.4 var(--mono);
+  white-space: nowrap;
+}
+
+.juncoes-titulo {
+  margin-bottom: 4px;
+  font: 600 11.5px/1.4 var(--mono);
+  color: var(--texto-3);
+}
+
+.juncoes-tabela table {
+  border-collapse: collapse;
+  font: 12.5px/1.5 var(--mono);
+}
+
+.juncoes-resultado {
+  align-self: center;
+}
+
+.juncoes-tabela th,
+.juncoes-tabela td {
+  padding: 3px 12px;
+  border: 1px solid var(--borda);
+  text-align: left;
+}
+
+.juncoes-tabela th {
+  background: var(--fundo-3);
+  color: var(--texto-2);
+  font-weight: 600;
+}
+
+.juncoes-tabela tr.casou td {
+  background: color-mix(in srgb, var(--verde) 12%, transparent);
+}
+
+.juncoes-tabela tr.sem-par td {
+  background: color-mix(in srgb, var(--amarelo) 13%, transparent);
+}
+
+.juncoes-tabela tr.destaque td {
+  background: color-mix(in srgb, var(--destaque) 30%, transparent);
+  color: var(--texto);
+}
+
+.juncoes-tabela td.nulo {
+  color: var(--texto-3);
+  font-style: italic;
+}
+
+.juncoes-sql {
+  margin: 0 0 8px;
+  font: 12.5px/1.55 var(--mono);
+  color: var(--texto);
+  white-space: pre-wrap;
+}

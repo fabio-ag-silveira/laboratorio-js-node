@@ -104,6 +104,7 @@ export const ALVOS = {
   node: { rotulo: 'node', onde: 'processo Node', lang: 'js' },
   python: { rotulo: 'python', onde: 'processo Python', lang: 'python' },
   csharp: { rotulo: 'c#', onde: 'dotnet run', lang: 'csharp' },
+  sql: { rotulo: 'sql', onde: 'PostgreSQL (PGlite)', lang: 'sql' },
 };
 
 /**
@@ -155,11 +156,62 @@ export async function rodarNoServidor(linguagem, codigo, saida, tempo) {
   }
 }
 
+/**
+ * Manda SQL para o PostgreSQL do laboratório e desenha cada resultado.
+ *
+ * Um bloco pode ter vários comandos; cada um devolve um resultado. Os que
+ * trazem colunas viram tabela; os demais (INSERT, CREATE...) viram uma linha
+ * de confirmação. A saída de um EXPLAIN é texto alinhado, e vai como texto.
+ */
+export async function rodarSQL(sql, saida) {
+  try {
+    const resposta = await fetch('/api/sql', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sql }),
+    });
+    const r = await resposta.json();
+
+    for (const res of r.resultados ?? []) {
+      if (res.campos.length === 0) {
+        saida.escrever('info', res.afetadas > 0 ? `ok · ${res.afetadas} ${res.afetadas === 1 ? 'linha afetada' : 'linhas afetadas'}` : 'ok');
+      } else if (res.campos.length === 1 && res.campos[0].nome === 'QUERY PLAN') {
+        for (const linha of res.linhas) saida.escrever('log', linha[0]);
+      } else {
+        saida.tabela(res.campos, res.linhas, res.total);
+      }
+    }
+
+    if (r.erro) {
+      const e = r.erro;
+      saida.escrever('erro', `ERRO: ${e.mensagem}${e.codigo ? `  (SQLSTATE ${e.codigo})` : ''}`);
+      if (e.posicao) {
+        // mostra a linha do SQL onde o Postgres apontou o problema
+        const antes = sql.slice(0, e.posicao - 1);
+        const numero = antes.split('\n').length;
+        const linha = sql.split('\n')[numero - 1] ?? '';
+        const coluna = antes.length - antes.lastIndexOf('\n') - 1;
+        saida.escrever('erro', `linha ${numero}: ${linha}`);
+        saida.escrever('erro', `${' '.repeat(`linha ${numero}: `.length + coluna)}^`);
+      }
+      if (e.detalhe) saida.escrever('aviso', `DETALHE: ${e.detalhe}`);
+      if (e.dica) saida.escrever('aviso', `DICA: ${e.dica}`);
+    }
+    if (r.instalar) saida.escrever('info', `Para instalar:  ${r.instalar}`);
+    if (!r.erro && !(r.resultados ?? []).length) saida.escrever('info', '(nenhum comando)');
+
+    return { ok: r.ok, ms: r.ms ?? 0 };
+  } catch (erro) {
+    saida.escrever('erro', `Não consegui falar com o servidor: ${erro.message}`);
+    return { ok: false, ms: 0 };
+  }
+}
+
 /** Roda no destino certo: 'browser' fica na aba, o resto vai para o servidor. */
 export function rodar(alvo, codigo, saida, tempo) {
-  return alvo === 'browser'
-    ? rodarNoNavegador(codigo, saida.escrever)
-    : rodarNoServidor(alvo, codigo, saida, tempo);
+  if (alvo === 'browser') return rodarNoNavegador(codigo, saida.escrever);
+  if (alvo === 'sql') return rodarSQL(codigo, saida);
+  return rodarNoServidor(alvo, codigo, saida, tempo);
 }
 
 /**
@@ -218,6 +270,42 @@ export function criarSaida() {
         figura.append(legenda);
       }
       galeria.append(figura);
+    },
+    /** Resultado de uma consulta. `total` pode ser maior que as linhas mostradas. */
+    tabela(campos, linhas, total = linhas.length) {
+      galeria = null;
+      const casca = document.createElement('div');
+      casca.className = 'saida-tabela';
+      const tabela = document.createElement('table');
+      const cabeca = tabela.createTHead().insertRow();
+      for (const c of campos) {
+        const th = document.createElement('th');
+        th.textContent = c.nome;
+        const tipo = document.createElement('span');
+        tipo.textContent = c.tipo;
+        th.append(tipo);
+        cabeca.append(th);
+      }
+      const corpo = tabela.createTBody();
+      for (const linha of linhas) {
+        const tr = corpo.insertRow();
+        for (const valor of linha) {
+          const td = tr.insertCell();
+          if (valor === null) {
+            td.textContent = 'NULL';
+            td.className = 'nulo';
+          } else {
+            td.textContent = String(valor);
+            if (typeof valor === 'number') td.className = 'numero';
+          }
+        }
+      }
+      casca.append(tabela);
+      const rodapeTabela = document.createElement('div');
+      rodapeTabela.className = 'saida-tabela-rodape';
+      rodapeTabela.textContent =
+        total > linhas.length ? `${total} linhas (mostrando as ${linhas.length} primeiras)` : `${total} ${total === 1 ? 'linha' : 'linhas'}`;
+      caixa.append(casca, rodapeTabela);
     },
     finalizar(resultado, onde) {
       rodape.hidden = false;

@@ -21,6 +21,7 @@ import { servirEstatico } from './estatico.js';
 import { executar, ambiente, LINGUAGENS } from './executores/index.js';
 import { rotearLab } from './api-lab.js';
 import { servirVendor, transformar, previaDisponivel } from './vendor.js';
+import { executarSQL, sqlDisponivel } from './sql/index.js';
 import { responderJSON, lerCorpoJSON } from './util-http.js';
 import { carregarTrilhas, resumir } from '../conteudo/index.js';
 
@@ -64,7 +65,7 @@ export function criarServidor() {
 
       // ---- 4. O que está instalado nesta máquina ---------------------------
       if (rota === '/api/ambiente') {
-        return responderJSON(res, 200, { ...(await ambiente()), previa: { ok: previaDisponivel(), instalar: 'npm install' } });
+        return responderJSON(res, 200, { ...(await ambiente()), previa: { ok: previaDisponivel(), instalar: 'npm install' }, sql: { ok: sqlDisponivel(), instalar: 'npm install' } });
       }
 
       // ---- 5. Prévia de React: bibliotecas empacotadas e JSX → JS -----------
@@ -75,6 +76,13 @@ export function criarServidor() {
         const { codigo } = await lerCorpoJSON(req);
         if (typeof codigo !== 'string') return responderJSON(res, 400, { erro: 'Envie { "codigo": "..." }' });
         return responderJSON(res, 200, await transformar(codigo));
+      }
+
+      // ---- SQL: PostgreSQL embutido (PGlite), numa cópia descartável do banco --
+      if (rota === '/api/sql' && req.method === 'POST') {
+        const { sql } = await lerCorpoJSON(req);
+        if (typeof sql !== 'string') return responderJSON(res, 400, { erro: 'Envie { "sql": "..." }' });
+        return responderJSON(res, 200, await executarSQL(sql));
       }
 
       // ---- 6. A API REST de treino -----------------------------------------

@@ -22,8 +22,8 @@ import { rodarUmTeste } from '../publico/js/assercoes.js';
 const RAIZ = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const trilhas = await carregarTrilhas();
 
-const TIPOS = ['texto', 'nota', 'py-js', 'comparacao', 'codigo', 'tabela', 'visual', 'quiz', 'exercicio', 'previa'];
-const ALVOS = [null, undefined, 'browser', 'node', 'python', 'csharp'];
+const TIPOS = ['texto', 'nota', 'py-js', 'comparacao', 'codigo', 'tabela', 'visual', 'quiz', 'exercicio', 'previa', 'desafio-sql'];
+const ALVOS = [null, undefined, 'browser', 'node', 'python', 'csharp', 'sql'];
 const ID = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
 /** Todas as lições, já com o endereço completo para a mensagem de erro. */
@@ -104,6 +104,10 @@ describe('formato das lições', () => {
           assert.ok(b.opcoes?.length >= 2, `${aqui}: precisa de 2+ opções`);
           assert.ok(Number.isInteger(b.correta) && b.correta >= 0 && b.correta < b.opcoes.length, `${aqui}: "correta" fora do intervalo`);
         }
+        if (b.t === 'desafio-sql') {
+          assert.ok(b.enunciado && b.solucao, `${aqui}: desafio de SQL sem enunciado ou solução`);
+          assert.equal(typeof b.inicial, 'string', `${aqui}: desafio de SQL sem código inicial`);
+        }
         if (b.t === 'previa') {
           assert.equal(typeof b.codigo, 'string', `${aqui}: falta codigo`);
           assert.match(b.codigo, /export default function \w+/, `${aqui}: a prévia precisa de "export default function"`);
@@ -180,4 +184,30 @@ describe('prévias: o código compila', async () => {
       });
     }
   }
+});
+
+// Desafios de SQL: a solução roda, devolve uma tabela, e o código inicial NÃO
+// produz o mesmo resultado (senão o desafio já viria resolvido).
+describe('desafios de SQL', async () => {
+  const { executarSQL, sqlDisponivel, fecharSQL } = await import('../servidor/sql/index.js');
+  const { comparar } = await import('../publico/js/desafio-sql.js').catch(() => ({ comparar: null }));
+  const pular = !sqlDisponivel();
+  const tabela = (r) => (r.resultados ?? []).filter((x) => x.campos.length > 0).at(-1);
+
+  for (const { onde, licao } of licoes) {
+    licao.blocos
+      .filter((b) => b.t === 'desafio-sql')
+      .forEach((b, i) => {
+        test(`${onde} — desafio ${i + 1}`, { skip: pular }, async () => {
+          const gabarito = await executarSQL(b.solucao);
+          assert.ok(gabarito.ok, `a solução falha: ${gabarito.erro?.mensagem}`);
+          assert.ok(tabela(gabarito)?.total > 0, 'a solução não devolve linhas');
+          const inicial = await executarSQL(b.inicial);
+          if (comparar && inicial.ok) {
+            assert.notEqual(comparar(tabela(inicial), tabela(gabarito), b.ordenado), null, 'o código inicial já resolve o desafio');
+          }
+        });
+      });
+  }
+  test('encerra o banco', () => fecharSQL());
 });

@@ -1,23 +1,20 @@
 /**
- * Trilha "PostgreSQL" — ainda em construção.
+ * Trilha "PostgreSQL" — SQL que executa de verdade.
  *
- * Enquanto `modulos` estiver vazio, a trilha aparece na página inicial como
- * "em construção", mostrando o que está previsto.
+ * Os blocos com `rodar: 'sql'` vão para um PostgreSQL embutido (PGlite), numa
+ * cópia descartável do banco de exemplo. Veja `servidor/sql/`.
  */
 
+import { partida, consultas } from './01-consultas.js';
+import { modelagem } from './02-modelagem.js';
+
 export const trilha = {
-  id: "postgresql",
+  id: 'postgresql',
   ordem: 50,
-  titulo: "PostgreSQL",
-  subtitulo: "SQL de verdade rodando na tela: junções, janelas, JSONB, índices e planos",
-  icone: "🐘",
-  cor: "#e88fb8",
-  ponte: "a partir do MySQL",
-  previsto: [
-    "Consultas, junções e agregação",
-    "CTE e funções de janela",
-    "Índices e EXPLAIN",
-    "JSONB e busca por similaridade (pgvector)"
-  ],
-  modulos: []
+  titulo: 'PostgreSQL',
+  subtitulo: 'Consultas, modelagem, transações, índices e operação, num Postgres que roda aqui',
+  icone: '🐘',
+  cor: '#e08fb0',
+  ponte: 'a partir do MySQL',
+  modulos: [partida, consultas, modelagem],
 };
