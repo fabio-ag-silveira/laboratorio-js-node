@@ -22,7 +22,7 @@ nada para instalar. Outra porta, se precisar: `PORTA=5000 npm start`.
 |---|---|---|
 | JavaScript e Node | pronta (24 lições) | navegador e Node |
 | Visão Computacional | 50 lições em 13 módulos: clássico, deep learning, detecção, avaliação, laboratório de treino, objetos pequenos, dados, segmentação e rastreamento, modelos de fundação, produção, estado da arte e entrevista | navegador (canvas) e Python (OpenCV, PyTorch, Ultralytics) |
-| React | em construção | prévia ao vivo |
+| React | 13 lições em 4 módulos: fundamentos, hooks, TypeScript, dados do servidor e React 19, projeto real; termina num painel que consome a API do laboratório | prévia ao vivo num iframe isolado, com exercícios testados clicando na tela |
 | React Native | em construção | prévia em moldura de celular |
 | PostgreSQL | em construção | Postgres embutido |
 | C# e .NET | em construção | `dotnet run` (SDK 10+) |
@@ -65,6 +65,18 @@ npm run verificar   # executa todos os blocos de código de todas as trilhas
 ```
 
 `npm run verificar -- visao` restringe a uma trilha. Blocos demorados, como o treino de um detector, só entram com `--lentos`.
+
+As prévias de React só rodam num navegador. `npm test` confere que todas compilam; para
+conferir que montam e que cada exercício falha no código inicial e passa na solução, abra
+o laboratório e rode no console:
+
+```js
+const { testarTrilha } = await import('/js/dev/testar-previas.js');
+console.log(await testarTrilha('react'));
+```
+
+As trilhas de React pedem `npm install` (React, React DOM e esbuild, dependências
+opcionais). Sem isso, o resto do laboratório funciona e a prévia mostra o comando.
 
 ## Estrutura
 

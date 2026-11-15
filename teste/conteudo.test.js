@@ -22,7 +22,7 @@ import { rodarUmTeste } from '../publico/js/assercoes.js';
 const RAIZ = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const trilhas = await carregarTrilhas();
 
-const TIPOS = ['texto', 'nota', 'py-js', 'comparacao', 'codigo', 'tabela', 'visual', 'quiz', 'exercicio'];
+const TIPOS = ['texto', 'nota', 'py-js', 'comparacao', 'codigo', 'tabela', 'visual', 'quiz', 'exercicio', 'previa'];
 const ALVOS = [null, undefined, 'browser', 'node', 'python', 'csharp'];
 const ID = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
@@ -104,6 +104,15 @@ describe('formato das lições', () => {
           assert.ok(b.opcoes?.length >= 2, `${aqui}: precisa de 2+ opções`);
           assert.ok(Number.isInteger(b.correta) && b.correta >= 0 && b.correta < b.opcoes.length, `${aqui}: "correta" fora do intervalo`);
         }
+        if (b.t === 'previa') {
+          assert.equal(typeof b.codigo, 'string', `${aqui}: falta codigo`);
+          assert.match(b.codigo, /export default function \w+/, `${aqui}: a prévia precisa de "export default function"`);
+          if (b.testes) {
+            assert.ok(b.enunciado, `${aqui}: exercício de prévia sem enunciado`);
+            assert.ok(b.solucao, `${aqui}: exercício de prévia sem solução`);
+            for (const t of b.testes) assert.ok(t.nome && t.codigo, `${aqui}: teste sem nome ou código`);
+          }
+        }
         if (b.t === 'exercicio') {
           assert.ok(b.enunciado && typeof b.inicial === 'string', `${aqui}: falta enunciado/inicial`);
           assert.ok(b.testes?.length, `${aqui}: sem testes`);
@@ -151,4 +160,24 @@ describe('exercícios: a solução passa nos próprios testes', () => {
       }
     }
   });
+});
+
+// As prévias só RODAM no navegador (veja publico/js/dev/testar-previas.js), mas
+// dá para garantir aqui que todo código de prévia, e toda solução, ao menos
+// compila. Sem as dependências opcionais instaladas, o teste é pulado.
+describe('prévias: o código compila', async () => {
+  const { transformar, previaDisponivel } = await import('../servidor/vendor.js');
+  const pular = !previaDisponivel();
+
+  for (const { onde, licao } of licoes) {
+    for (const b of licao.blocos.filter((x) => x.t === 'previa')) {
+      test(`${onde} — ${b.titulo}`, { skip: pular }, async () => {
+        for (const [nome, codigo] of [['codigo', b.codigo], ['solucao', b.solucao]]) {
+          if (!codigo) continue;
+          const r = await transformar(codigo);
+          assert.ok(!r.erro, `${nome}: linha ${r.linha}: ${r.erro}`);
+        }
+      });
+    }
+  }
 });

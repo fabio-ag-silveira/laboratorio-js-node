@@ -498,3 +498,114 @@ a.trilha-cartao:hover {
     overflow-x: auto;
   }
 }
+
+/* ---------- prévia ao vivo (React e React Native) ---------------------- */
+
+.etiqueta-react {
+  color: #6aa9f0;
+  border-color: color-mix(in srgb, #6aa9f0 40%, transparent);
+}
+
+.previa {
+  container: previa / inline-size;
+  margin: 18px 0;
+  border: 1px solid var(--borda);
+  border-radius: var(--raio, 10px);
+  background: var(--fundo-2);
+  overflow: hidden;
+}
+
+.previa-exercicio {
+  border-color: color-mix(in srgb, var(--roxo) 45%, var(--borda));
+}
+
+.previa-exercicio.resolvido {
+  border-color: var(--verde);
+}
+
+.previa-enunciado {
+  padding: 12px 16px 2px;
+}
+
+.previa-corpo {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  border-top: 1px solid var(--borda);
+}
+
+.previa-corpo > .editor {
+  border-right: 1px solid var(--borda);
+  min-height: 100%;
+}
+
+.previa-lado {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--fundo-2);
+}
+
+.previa-moldura {
+  flex: 1;
+  min-height: 80px;
+  color: var(--texto-3);
+  font-size: 12.5px;
+}
+
+.previa-moldura:not(:has(iframe, pre)) {
+  display: grid;
+  place-items: center;
+}
+
+.previa-iframe {
+  display: block;
+  width: 100%;
+  border: 0;
+  background: var(--fundo-2);
+}
+
+.previa-erro {
+  margin: 12px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  white-space: pre-wrap;
+  font: 12.5px/1.5 var(--mono, ui-monospace, Consolas, monospace);
+  color: var(--vermelho);
+  border: 1px solid var(--vermelho);
+  background: color-mix(in srgb, var(--vermelho) 10%, transparent);
+}
+
+.previa-console {
+  border-top: 1px solid var(--borda);
+  max-height: 150px;
+  overflow: auto;
+  padding: 6px 12px;
+  background: var(--fundo);
+  font: 12px/1.55 var(--mono, ui-monospace, Consolas, monospace);
+}
+
+.previa-console::before {
+  content: "console";
+  display: block;
+  font: 10px/1.6 system-ui, sans-serif;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--texto-3);
+}
+
+.previa .exercicio-acoes {
+  border-top: 1px solid var(--borda);
+}
+
+/* Empilha editor e prévia quando o BLOCO é estreito, e não a janela: a coluna
+   da lição pode ser estreita numa janela larga. É para isso que servem as
+   consultas de contêiner. */
+@container previa (max-width: 760px) {
+  .previa-corpo {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .previa-corpo > .editor {
+    border-right: 0;
+    border-bottom: 1px solid var(--borda);
+  }
+}

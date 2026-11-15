@@ -20,6 +20,7 @@ import path from 'node:path';
 import { servirEstatico } from './estatico.js';
 import { executar, ambiente, LINGUAGENS } from './executores/index.js';
 import { rotearLab } from './api-lab.js';
+import { servirVendor, transformar, previaDisponivel } from './vendor.js';
 import { responderJSON, lerCorpoJSON } from './util-http.js';
 import { carregarTrilhas, resumir } from '../conteudo/index.js';
 
@@ -63,10 +64,20 @@ export function criarServidor() {
 
       // ---- 4. O que está instalado nesta máquina ---------------------------
       if (rota === '/api/ambiente') {
-        return responderJSON(res, 200, await ambiente());
+        return responderJSON(res, 200, { ...(await ambiente()), previa: { ok: previaDisponivel(), instalar: 'npm install' } });
       }
 
-      // ---- 5. A API REST de treino -----------------------------------------
+      // ---- 5. Prévia de React: bibliotecas empacotadas e JSX → JS -----------
+      if (rota.startsWith('/vendor/') && req.method === 'GET') {
+        return servirVendor(req, res, rota);
+      }
+      if (rota === '/api/transformar' && req.method === 'POST') {
+        const { codigo } = await lerCorpoJSON(req);
+        if (typeof codigo !== 'string') return responderJSON(res, 400, { erro: 'Envie { "codigo": "..." }' });
+        return responderJSON(res, 200, await transformar(codigo));
+      }
+
+      // ---- 6. A API REST de treino -----------------------------------------
       if (rota.startsWith('/api/lab')) {
         const corpo = ['POST', 'PUT', 'PATCH'].includes(req.method)
           ? await lerCorpoJSON(req).catch(() => null)
@@ -74,7 +85,7 @@ export function criarServidor() {
         return rotearLab({ req, res, url, corpo });
       }
 
-      // ---- 6. Qualquer outra coisa: arquivos da interface ------------------
+      // ---- 7. Qualquer outra coisa: arquivos da interface ------------------
       return servirEstatico(req, res, PASTA_PUBLICA);
     } catch (erro) {
       console.error('[erro]', erro);
