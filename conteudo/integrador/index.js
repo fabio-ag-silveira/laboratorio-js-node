@@ -48,7 +48,7 @@ const roteiro = {
 |---|---|---|
 | App de campo | React Native | o registro de capturas com fila de sincronização |
 | Painel | React | o painel de detecções contra a API de treino |
-| API | C# e .NET | (a trilha depende do SDK do .NET instalado) |
+| API | C# e .NET | a API de capturas, com idempotência e rota interna protegida |
 | Banco | PostgreSQL | as consultas do relatório de infestação |
 | Serviço de inferência | Python para IA | o serviço com portão de qualidade, testado |
 | Detector | Visão computacional | o YOLO treinado no laboratório de treino |
@@ -334,8 +334,8 @@ A API é o centro: tudo passa por ela, e é ela que protege o banco. É a etapa 
         },
         {
           t: 'nota',
-          estilo: 'atencao',
-          md: `A trilha de C# deste laboratório depende do **SDK do .NET**, que ainda não está instalado nesta máquina (só o *runtime* está). Instale com \`winget install Microsoft.DotNet.SDK.10\` e reinicie o laboratório: a página inicial mostra quando ele é reconhecido. Enquanto isso, as etapas 1, 2, 4 e 5 não dependem dela. O painel e o app podem ser construídos contra uma API simulada, a partir do contrato.`,
+          estilo: 'dica',
+          md: `Parta do projeto da trilha de C#, [a API de capturas](#/t/csharp/projeto/api-de-capturas): ele já resolve, num arquivo só, o \`PUT\` idempotente, a rota interna protegida e a paginação. Aqui ele vira um projeto de verdade: PostgreSQL com Npgsql no lugar do SQLite, migrações, xUnit com Testcontainers e o restante das rotas do contrato. A lição [EF Core na prática](#/t/csharp/aspnet/ef-core-na-pratica) mostra a configuração com PostgreSQL.`,
         },
         {
           t: 'tabela',

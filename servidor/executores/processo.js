@@ -97,7 +97,9 @@ export async function executarProcesso({ comando, argumentos, extensao, codigo, 
       });
     });
 
-    const partes = await separarPartes(bruto.saida, pasta);
+    // O compilador do C# escreve erros e avisos na saída padrão, com o caminho
+    // completo do arquivo temporário: tira-se o caminho aqui também.
+    const partes = await separarPartes(limparCaminho(bruto.saida, pasta), pasta);
 
     return {
       partes,
