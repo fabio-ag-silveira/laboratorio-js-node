@@ -407,3 +407,211 @@ canvas.mira {
   color: var(--texto);
   white-space: pre-wrap;
 }
+
+/* ---------- Azure: simulador de pipeline --------------------------------- */
+
+.pipeline-corpo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+}
+
+.pipeline-editor {
+  max-height: 560px;
+  border: 1px solid var(--borda);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.pipeline-painel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.pipeline-estagio {
+  border: 1px solid var(--borda);
+  border-left-width: 4px;
+  border-radius: 8px;
+  padding: 8px 10px;
+  background: var(--fundo-2);
+}
+
+.pipeline-estagio.estado-ok { border-left-color: var(--verde); }
+.pipeline-estagio.estado-falhou { border-left-color: var(--vermelho); }
+.pipeline-estagio.estado-aguardando { border-left-color: var(--amarelo); }
+.pipeline-estagio.estado-pulado { opacity: 0.6; }
+
+.pipeline-cab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13.5px;
+}
+
+.pipeline-estado {
+  margin-left: auto;
+  font-size: 11.5px;
+  color: var(--texto-3);
+}
+
+.pipeline-dep {
+  margin: 2px 0 0 22px;
+  font-size: 11px;
+  color: var(--texto-3);
+}
+
+.pipeline-job {
+  margin: 8px 0 0 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.pipeline-job-titulo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font: 12px/1.5 var(--mono);
+  color: var(--texto-2);
+}
+
+.pipeline-ambiente {
+  margin-left: auto;
+  padding: 0 7px;
+  border-radius: 99px;
+  border: 1px solid var(--borda-forte);
+  font: 10.5px/1.6 system-ui, sans-serif;
+  color: var(--texto-3);
+}
+
+.pipeline-passo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 14px;
+  padding: 3px 8px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--texto-2);
+  font: 12.5px/1.5 system-ui, sans-serif;
+  text-align: left;
+  cursor: pointer;
+}
+
+.pipeline-passo:hover { border-color: var(--borda-forte); }
+.pipeline-passo.estado-falhou { color: var(--vermelho); }
+.pipeline-passo.estado-pulado { color: var(--texto-3); text-decoration: line-through; }
+
+.pipeline-icone {
+  width: 14px;
+  text-align: center;
+  font-weight: 700;
+}
+
+.estado-ok > .pipeline-icone,
+.estado-ok > .pipeline-cab .pipeline-icone,
+.estado-ok > .pipeline-job-titulo .pipeline-icone { color: var(--verde); }
+.estado-falhou > .pipeline-icone,
+.estado-falhou > .pipeline-cab .pipeline-icone,
+.estado-falhou > .pipeline-job-titulo .pipeline-icone { color: var(--vermelho); }
+.estado-aguardando > .pipeline-cab .pipeline-icone,
+.estado-aguardando > .pipeline-job-titulo .pipeline-icone { color: var(--amarelo); }
+
+.pipeline-erro,
+.pipeline-vazio {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--borda);
+  font-size: 12.5px;
+  white-space: pre-wrap;
+}
+
+.pipeline-erro { color: var(--vermelho); border-color: var(--vermelho); font-family: var(--mono); }
+
+@media (max-width: 900px) {
+  .pipeline-corpo { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ---------- Azure: arquitetura ------------------------------------------- */
+
+.arq-corpo {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.arq-mapa { display: flex; flex-direction: column; gap: 8px; }
+
+.arq-faixa-titulo {
+  margin-bottom: 4px;
+  font-size: 10.5px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--texto-3);
+}
+
+.arq-linha { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.arq-peca {
+  flex: 1 1 130px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 7px 10px;
+  border: 1px solid var(--borda);
+  border-radius: 8px;
+  background: var(--fundo-2);
+  color: var(--texto);
+  text-align: left;
+  cursor: pointer;
+}
+
+.arq-peca strong { font-size: 13px; }
+.arq-peca span { font-size: 11px; color: var(--texto-3); }
+.arq-peca:hover { border-color: var(--borda-forte); }
+.arq-peca.ativo { border-color: var(--destaque); background: color-mix(in srgb, var(--destaque) 10%, var(--fundo-2)); }
+
+.arq-detalhe h4 { margin: 0 0 8px; font-size: 14px; }
+.arq-detalhe p { margin: 0 0 8px; font-size: 13px; line-height: 1.5; color: var(--texto-2); }
+
+.arq-rotulo {
+  display: block;
+  font-size: 10.5px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--texto-3);
+}
+
+@media (max-width: 900px) {
+  .arq-corpo { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ---------- Azure: qual serviço usar ------------------------------------- */
+
+.escolha-corpo { display: flex; flex-direction: column; gap: 10px; }
+.escolha-texto { margin-bottom: 4px; font-size: 13px; color: var(--texto-2); }
+
+.escolha-resultado {
+  margin-top: 4px;
+  padding: 12px 14px;
+  border: 1px solid var(--destaque);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--destaque) 8%, transparent);
+}
+
+.escolha-rotulo {
+  font-size: 10.5px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--texto-3);
+}
+
+.escolha-resultado h4 { margin: 2px 0 6px; font-size: 16px; }
+.escolha-resultado p { margin: 0 0 6px; font-size: 13px; line-height: 1.5; color: var(--texto-2); }
+.escolha-resultado .escolha-motivo { color: var(--texto); }

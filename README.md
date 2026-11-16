@@ -27,7 +27,7 @@ nada para instalar. Outra porta, se precisar: `PORTA=5000 npm start`.
 | PostgreSQL | 12 lições em 4 módulos: consultas (NULL, junções, agregação, janelas), modelagem e transações, JSONB, índices e EXPLAIN, busca textual e pgvector, operação, e um projeto com desafios | PostgreSQL de verdade embutido (PGlite), numa cópia descartável do banco a cada execução |
 | C# e .NET | em construção | `dotnet run` (SDK 10+) |
 | Python para IA | 10 lições em 3 módulos: uv e tipagem, NumPy e PyTorch por dentro, desempenho na GPU, FastAPI testado, concorrência e lote dinâmico, modelos de linguagem com visão, e o projeto do serviço de inferência | Python da sua máquina (com GPU, se houver) |
-| Azure e Azure DevOps | em construção | diagramas e simuladores |
+| Azure e Azure DevOps | 10 lições em 3 módulos: organização e identidade, onde rodar, dados e mensagens, Bicep, contêineres, Azure DevOps, pipelines em YAML, observabilidade e custo, e o projeto do sistema na nuvem | não executa (uma conta de nuvem não cabe aqui): arquitetura clicável, "onde eu rodo isto?" e um simulador de pipeline YAML |
 
 Cada trilha parte do que você já sabe: Python → JavaScript e C#, Flutter → React Native,
 MySQL → PostgreSQL, Cloudflare → Azure.

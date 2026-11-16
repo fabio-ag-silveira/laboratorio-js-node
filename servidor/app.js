@@ -78,6 +78,19 @@ export function criarServidor() {
         return responderJSON(res, 200, await transformar(codigo));
       }
 
+      // ---- YAML → objeto, para o simulador de pipeline da trilha de Azure ------
+      if (rota === '/api/yaml' && req.method === 'POST') {
+        const { texto } = await lerCorpoJSON(req);
+        if (typeof texto !== 'string') return responderJSON(res, 400, { erro: 'Envie { "texto": "..." }' });
+        try {
+          const { parse } = await import('yaml');
+          return responderJSON(res, 200, { ok: true, dados: parse(texto) });
+        } catch (e) {
+          if (e.code === 'ERR_MODULE_NOT_FOUND') return responderJSON(res, 200, { ok: false, erro: 'O pacote "yaml" não está instalado.', instalar: 'npm install' });
+          return responderJSON(res, 200, { ok: false, erro: e.message.split('\n')[0], linha: e.linePos?.[0]?.line });
+        }
+      }
+
       // ---- SQL: PostgreSQL embutido (PGlite), numa cópia descartável do banco --
       if (rota === '/api/sql' && req.method === 'POST') {
         const { sql } = await lerCorpoJSON(req);

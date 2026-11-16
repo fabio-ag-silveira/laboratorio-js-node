@@ -1,23 +1,22 @@
 /**
- * Trilha "Azure e Azure DevOps" — ainda em construção.
+ * Trilha "Azure e Azure DevOps".
  *
- * Enquanto `modulos` estiver vazio, a trilha aparece na página inicial como
- * "em construção", mostrando o que está previsto.
+ * É a única trilha que não executa: uma conta de nuvem não cabe num
+ * laboratório local. Em troca, tem três painéis interativos (a arquitetura do
+ * sistema, "onde eu rodo isto?" e um simulador de pipeline YAML) e muito
+ * código para ler: `az`, Bicep, Dockerfile, pipeline e KQL.
  */
 
+import { fundamentos } from './01-nuvem.js';
+import { entrega, operacao } from './02-entrega.js';
+
 export const trilha = {
-  id: "azure",
+  id: 'azure',
   ordem: 80,
-  titulo: "Azure e Azure DevOps",
-  subtitulo: "A nuvem da Microsoft e a esteira de entrega: serviços, identidade, pipelines e custo",
-  icone: "☁️",
-  cor: "#4fb3d9",
-  ponte: "a partir de Cloudflare e Netlify",
-  previsto: [
-    "Mapa dos serviços e identidade",
-    "Computação, armazenamento e banco",
-    "Pipelines YAML e ambientes",
-    "Infraestrutura como código (Bicep)"
-  ],
-  modulos: []
+  titulo: 'Azure e Azure DevOps',
+  subtitulo: 'A nuvem da Microsoft para quem já publica: identidade, computação, dados, Bicep, pipelines e operação',
+  icone: '☁️',
+  cor: '#4aa3e8',
+  ponte: 'a partir do Cloudflare e do Netlify',
+  modulos: [fundamentos, entrega, operacao],
 };
