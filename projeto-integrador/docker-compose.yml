@@ -1,0 +1,30 @@
+# Um PostgreSQL de verdade para o projeto integrador.
+#
+#   docker compose up -d        sobe o banco, já com o esquema criado
+#   docker compose exec banco psql -U armadilhas
+#   docker compose down         para (os dados ficam no volume)
+#   docker compose down -v      para e APAGA os dados
+#
+# A senha abaixo é só para desenvolvimento local, numa porta que só a sua
+# máquina alcança. Em qualquer outro lugar: variável de ambiente e cofre.
+services:
+  banco:
+    image: pgvector/pgvector:pg18
+    environment:
+      POSTGRES_USER: armadilhas
+      POSTGRES_PASSWORD: so-para-desenvolvimento-local
+      POSTGRES_DB: armadilhas
+      TZ: America/Campo_Grande
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - dados:/var/lib/postgresql
+      - ./banco:/docker-entrypoint-initdb.d:ro    # os .sql desta pasta rodam na primeira subida, em ordem
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U armadilhas"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  dados:
