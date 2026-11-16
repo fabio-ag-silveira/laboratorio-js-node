@@ -24,7 +24,7 @@ nada para instalar. Outra porta, se precisar: `PORTA=5000 npm start`.
 | Visão Computacional | 50 lições em 13 módulos: clássico, deep learning, detecção, avaliação, laboratório de treino, objetos pequenos, dados, segmentação e rastreamento, modelos de fundação, produção, estado da arte e entrevista | navegador (canvas) e Python (OpenCV, PyTorch, Ultralytics) |
 | React | 13 lições em 4 módulos: fundamentos, hooks, TypeScript, dados do servidor e React 19, projeto real; termina num painel que consome a API do laboratório | prévia ao vivo num iframe isolado, com exercícios testados clicando na tela |
 | React Native | 10 lições em 4 módulos: componentes nativos, Flexbox, listas, formulários, navegação, offline, câmera, publicação e o projeto de registro de capturas sem sinal | prévia numa moldura de celular (react-native-web); câmera e publicação como código para ler |
-| PostgreSQL | em construção | Postgres embutido |
+| PostgreSQL | 12 lições em 4 módulos: consultas (NULL, junções, agregação, janelas), modelagem e transações, JSONB, índices e EXPLAIN, busca textual e pgvector, operação, e um projeto com desafios | PostgreSQL de verdade embutido (PGlite), numa cópia descartável do banco a cada execução |
 | C# e .NET | em construção | `dotnet run` (SDK 10+) |
 | Python para IA | em construção | Python |
 | Azure e Azure DevOps | em construção | diagramas e simuladores |

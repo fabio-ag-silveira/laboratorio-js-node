@@ -7,6 +7,7 @@
 
 import { partida, consultas } from './01-consultas.js';
 import { modelagem } from './02-modelagem.js';
+import { producao } from './03-producao.js';
 
 export const trilha = {
   id: 'postgresql',
@@ -16,5 +17,5 @@ export const trilha = {
   icone: '🐘',
   cor: '#e08fb0',
   ponte: 'a partir do MySQL',
-  modulos: [partida, consultas, modelagem],
+  modulos: [partida, consultas, modelagem, producao],
 };
