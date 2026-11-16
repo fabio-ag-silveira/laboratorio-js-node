@@ -7,6 +7,7 @@
 
 import { moderno } from './01-python-moderno.js';
 import { pytorch } from './02-pytorch.js';
+import { servico } from './03-servico.js';
 
 export const trilha = {
   id: 'python-ia',
@@ -16,5 +17,5 @@ export const trilha = {
   icone: '🐍',
   cor: '#f0c14b',
   ponte: 'reforço: você já é avançado',
-  modulos: [moderno, pytorch],
+  modulos: [moderno, pytorch, servico],
 };

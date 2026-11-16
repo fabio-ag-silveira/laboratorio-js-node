@@ -71,6 +71,8 @@ const PACOTES_PYTHON = [
   ['skimage', 'scikit-image'],
   ['sklearn', 'scikit-learn'],
   ['fastapi', 'fastapi'],
+  ['httpx', 'httpx'],
+  ['pydantic', 'pydantic'],
 ];
 
 /**

@@ -26,7 +26,7 @@ nada para instalar. Outra porta, se precisar: `PORTA=5000 npm start`.
 | React Native | 10 lições em 4 módulos: componentes nativos, Flexbox, listas, formulários, navegação, offline, câmera, publicação e o projeto de registro de capturas sem sinal | prévia numa moldura de celular (react-native-web); câmera e publicação como código para ler |
 | PostgreSQL | 12 lições em 4 módulos: consultas (NULL, junções, agregação, janelas), modelagem e transações, JSONB, índices e EXPLAIN, busca textual e pgvector, operação, e um projeto com desafios | PostgreSQL de verdade embutido (PGlite), numa cópia descartável do banco a cada execução |
 | C# e .NET | em construção | `dotnet run` (SDK 10+) |
-| Python para IA | em construção | Python |
+| Python para IA | 10 lições em 3 módulos: uv e tipagem, NumPy e PyTorch por dentro, desempenho na GPU, FastAPI testado, concorrência e lote dinâmico, modelos de linguagem com visão, e o projeto do serviço de inferência | Python da sua máquina (com GPU, se houver) |
 | Azure e Azure DevOps | em construção | diagramas e simuladores |
 
 Cada trilha parte do que você já sabe: Python → JavaScript e C#, Flutter → React Native,
